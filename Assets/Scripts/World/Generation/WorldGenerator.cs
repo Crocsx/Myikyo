@@ -18,6 +18,11 @@ public class WorldGenerator : MonoBehaviour
         hexasphere = Hexasphere.GetInstance("Hexasphere");
     }
 
+    void Start()
+    {
+        GenerateWorld();
+    }
+
 
 
     public void OnShapeSettingsUpdate()

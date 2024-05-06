@@ -516,7 +516,7 @@ namespace HexasphereGrid {
 
             if (_zoomEnabled) {
                 // Use mouse wheel to zoom in and out
-                float wheel = Input.GetAxis("Mouse ScrollWheel");
+                float wheel = (_zoomInverted ? -1 : 1) * Input.GetAxis("Mouse ScrollWheel");
                 wheelAccel += wheel;
 
                 // Support for pinch on mobile

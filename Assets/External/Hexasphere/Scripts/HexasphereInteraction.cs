@@ -100,7 +100,21 @@ namespace HexasphereGrid {
 			}
 		}
 
+        [SerializeField]
+        bool _zoomInverted = true;
 
+        public bool zoomInverted
+        {
+            get { return _zoomInverted; }
+            set
+            {
+                if (_zoomInverted != value)
+                {
+                    _zoomInverted = value;
+                }
+            }
+        }
+        
 		[SerializeField]
 		bool _zoomEnabled = true;
 
