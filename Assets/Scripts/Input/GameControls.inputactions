@@ -1,0 +1,187 @@
+{
+    "name": "GameControls",
+    "maps": [
+        {
+            "name": "Camera",
+            "id": "cd54028e-1c62-4d41-a8c7-b89067d4207e",
+            "actions": [
+                {
+                    "name": "PrimaryControlPosition",
+                    "type": "Value",
+                    "id": "d4ce5720-9974-468e-9d56-b64b5c5c5573",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SecondaryControlPosition",
+                    "type": "Value",
+                    "id": "0b56703a-98be-4a70-9e5b-b3c193cdd73c",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SecondaryControlTouchContact",
+                    "type": "Button",
+                    "id": "bdc0b1a6-716a-44fa-91bc-7ab5d6c26ed6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Zoom",
+                    "type": "Value",
+                    "id": "85a299bb-ef93-465c-9232-9aa3fa491ca0",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Debug",
+                    "type": "Button",
+                    "id": "e39f96b4-73d1-4468-9e63-0556299d478d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PrimaryControlDown",
+                    "type": "Button",
+                    "id": "4bec4553-963e-45ad-80e6-243f955c767f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SecondaryControlDown",
+                    "type": "Button",
+                    "id": "3ea58fb1-b2ca-4b67-b932-f9dac525949a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "82f948a5-8ed3-4e49-8d78-3d3a852a94c5",
+                    "path": "<Touchscreen>/touch0/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryControlPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7f66ad90-5f32-49a1-9b92-8cd75dce926e",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryControlPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a0446369-d2f2-438f-a78e-6d07e4d422d1",
+                    "path": "<Touchscreen>/touch1/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondaryControlPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dc4712ca-6fdb-42e4-b2d5-7b79b2bcb9cf",
+                    "path": "<Touchscreen>/touch1/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondaryControlTouchContact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2fbfa3ed-6578-4c93-9918-75fc2d21e186",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "Scale(factor=200)",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a04390e8-ee14-4609-a940-c673bb91b26e",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Debug",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "17f7adaa-e975-4857-bd8c-dcb4df49adf1",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryControlDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e8b1680d-b834-45b4-85d4-bb0b228a2090",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryControlDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "76d0b5c6-58cb-4357-978b-d8a4d17e6dda",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondaryControlDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "08139879-8c20-4f11-bd5e-deab30d1c5db",
+                    "path": "<Touchscreen>/touch1/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondaryControlDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

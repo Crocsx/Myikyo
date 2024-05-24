@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae16f0f9932ad484589f3ae253c099af, type: 3}
+  m_Name: WorldTileSettings
+  m_EditorClassIdentifier: 
+  tiles:
+  - minElevationRange: 0.2
+    maxElevationRange: 0.6
+    frequency: 0.2
+    spawnOnWater: 0
+    tile: {fileID: 274358620025006549, guid: 35fef8852bd262d4d8e89314445caec6, type: 3}
+  - minElevationRange: 0
+    maxElevationRange: 0.3
+    frequency: 0.2
+    spawnOnWater: 0
+    tile: {fileID: 1351473921356686753, guid: ee02f25a72756a74f9769527b77d0d68, type: 3}
+  - minElevationRange: 0.4
+    maxElevationRange: 0.7
+    frequency: 0.2
+    spawnOnWater: 0
+    tile: {fileID: 1409953237114667760, guid: 637476e3544ba1645a22a3a205e9fb41, type: 3}
+  - minElevationRange: 0
+    maxElevationRange: 0.6
+    frequency: 0.2
+    spawnOnWater: 0
+    tile: {fileID: 2661445991071307838, guid: 21b52f55087de834290dfd6f2d2a086f, type: 3}

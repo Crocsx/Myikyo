@@ -3,15 +3,16 @@
 /// Created by Ramiro Oliva (Kronnect)
 /// </summary>
 
-using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 
-namespace HexasphereGrid {
+namespace HexasphereGrid
+{
 
-    public partial class Hexasphere : MonoBehaviour {
+    public partial class Hexasphere : MonoBehaviour
+    {
 
         #region Public API
 
@@ -23,7 +24,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns the index of the tile in the tiles list
         /// </summary>
-        public int GetTileIndex(Tile tile) {
+        public int GetTileIndex(Tile tile)
+        {
             if (tiles == null)
                 return -1;
             return tile.index;
@@ -37,95 +39,132 @@ namespace HexasphereGrid {
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="mat">Material to be used.</param>
         /// <param name="temporary">If set to <c>true</c> the material is not saved anywhere and will be restored to default tile material when tile gets unselected.</param>
-        public bool SetTileMaterial(int tileIndex, Material mat, bool temporary = false) {
+        public bool SetTileMaterial(int tileIndex, Material mat, bool temporary = false)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
             Tile tile = tiles[tileIndex];
-            if (temporary) {
+            if (temporary)
+            {
                 if (tile.tempMat == mat)
                     return false; // nochanges
-                if (tile.renderer == null) {
+                if (tile.renderer == null)
+                {
                     GenerateTileMesh(tileIndex, mat);
-                } else {
+                }
+                else
+                {
                     tile.renderer.sharedMaterial = mat;
                     tile.renderer.enabled = true;
                 }
-            } else {
+            }
+            else
+            {
                 if (tile.customMat == mat)
                     return false; // nochanges
                 Color32 matColor = Misc.Color32White;
-                if (mat.HasProperty(ShaderParams.Color)) {
+                if (mat.HasProperty(ShaderParams.Color))
+                {
                     matColor = mat.color;
-                } else if (mat.HasProperty(ShaderParams.BaseColor)) {
+                }
+                else if (mat.HasProperty(ShaderParams.BaseColor))
+                {
                     matColor = mat.GetColor(ShaderParams.BaseColor);
                 }
                 pendingColorsUpdate = true;
                 Texture matTexture = null;
-                if (mat.HasProperty(ShaderParams.MainTex)) {
+                if (mat.HasProperty(ShaderParams.MainTex))
+                {
                     matTexture = mat.mainTexture;
-                } else if (mat.HasProperty(ShaderParams.BaseMap)) {
+                }
+                else if (mat.HasProperty(ShaderParams.BaseMap))
+                {
                     matTexture = mat.GetTexture(ShaderParams.BaseMap);
                 }
-                if (matTexture != null) {
+                if (matTexture != null)
+                {
                     pendingTextureArrayUpdate = true;
-                } else {
+                }
+                else
+                {
                     List<Color32> colorChunk = colorShaded[tile.uvShadedChunkIndex];
-                    for (int k = 0; k < tile.uvShadedChunkLength; k++) {
+                    for (int k = 0; k < tile.uvShadedChunkLength; k++)
+                    {
                         colorChunk[tile.uvShadedChunkStart + k] = matColor;
                     }
                     colorShadedDirty[tile.uvShadedChunkIndex] = true;
                 }
                 // Only if wire color is set to use the tile color
                 List<Color32> colorWireChunk = colorWire[tile.uvWireChunkIndex];
-                if (!_wireframeColorFromTile) {
+                if (!_wireframeColorFromTile)
+                {
                     matColor = Misc.Color32White;
                 }
 
-                for (int k = 0; k < tile.uvWireChunkLength; k++) {
+                for (int k = 0; k < tile.uvWireChunkLength; k++)
+                {
                     colorWireChunk[tile.uvWireChunkStart + k] = matColor;
                 }
                 colorWireDirty[tile.uvWireChunkIndex] = true;
 
-                if (_smartEdges) {
+                if (_smartEdges)
+                {
                     needRegenerateWireframe = true;
                     shouldUpdateMaterialProperties = true;
                 }
             }
 
-            if (mat != highlightMaterial) {
-                if (temporary) {
+            if (mat != highlightMaterial)
+            {
+                if (temporary)
+                {
                     tile.tempMat = mat;
-                } else {
+                }
+                else
+                {
                     tile.customMat = mat;
                 }
             }
 
-            if (highlightMaterial != null && tile == lastHighlightedTile) {
+            if (highlightMaterial != null && tile == lastHighlightedTile)
+            {
                 SetHighlightStyle();
-                if (tile.renderer != null) {
+                if (tile.renderer != null)
+                {
                     tile.renderer.sharedMaterial = highlightMaterial;
                 }
                 Material srcMat = null;
-                if (tile.tempMat != null) {
+                if (tile.tempMat != null)
+                {
                     srcMat = tile.tempMat;
-                } else if (tile.customMat != null) {
+                }
+                else if (tile.customMat != null)
+                {
                     srcMat = tile.customMat;
                 }
-                if (srcMat != null) {
+                if (srcMat != null)
+                {
                     Color32 color = Misc.Color32White;
-                    if (srcMat.HasProperty(ShaderParams.Color)) {
+                    if (srcMat.HasProperty(ShaderParams.Color))
+                    {
                         color = srcMat.color;
-                    } else if (srcMat.HasProperty(ShaderParams.BaseColor)) {
+                    }
+                    else if (srcMat.HasProperty(ShaderParams.BaseColor))
+                    {
                         color = srcMat.GetColor(ShaderParams.BaseColor);
                     }
                     highlightMaterial.SetColor(ShaderParams.Color2, color);
                     Texture tempMatTexture = null;
-                    if (srcMat.HasProperty(ShaderParams.MainTex)) {
+                    if (srcMat.HasProperty(ShaderParams.MainTex))
+                    {
                         tempMatTexture = srcMat.mainTexture;
-                    } else if (srcMat.HasProperty(ShaderParams.BaseMap)) {
+                    }
+                    else if (srcMat.HasProperty(ShaderParams.BaseMap))
+                    {
                         tempMatTexture = srcMat.GetTexture(ShaderParams.BaseMap);
                     }
-                    if (tempMatTexture != null && highlightMaterial.HasProperty(ShaderParams.MainTex)) {
+                    if (tempMatTexture != null && highlightMaterial.HasProperty(ShaderParams.MainTex))
+                    {
                         highlightMaterial.mainTexture = tempMatTexture;
                     }
                 }
@@ -141,7 +180,8 @@ namespace HexasphereGrid {
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="color">Color.</param>
         /// <param name="temporary">If set to <c>true</c> the tile is colored temporarily and returns to default color when it gets unselected.</param>
-        public bool SetTileColor(int tileIndex, Color color, bool temporary = false) {
+        public bool SetTileColor(int tileIndex, Color color, bool temporary = false)
+        {
             Material mat = GetCachedMaterial(color);
             return SetTileMaterial(tileIndex, mat, temporary);
         }
@@ -154,16 +194,19 @@ namespace HexasphereGrid {
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="color">Color.</param>
         /// <param name="temporary">If set to <c>true</c> the tile is colored temporarily and returns to default color when it gets unselected.</param>
-        public void SetTileColor(List<int> tileIndices, Color color, bool temporary = false) {
+        public void SetTileColor(List<int> tileIndices, Color color, bool temporary = false)
+        {
             if (tileIndices == null)
                 return;
             Material mat = GetCachedMaterial(color);
             int tc = tileIndices.Count;
-            for (int k = 0; k < tc; k++) {
+            for (int k = 0; k < tc; k++)
+            {
                 int tileIndex = tileIndices[k];
                 SetTileMaterial(tileIndex, mat, temporary);
             }
-            if (!temporary) {
+            if (!temporary)
+            {
                 pendingColorsUpdate = true;
             }
         }
@@ -175,8 +218,10 @@ namespace HexasphereGrid {
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="texture">Color.</param>
         /// <param name="temporary">If set to <c>true</c> the tile is colored temporarily and returns to default color when it gets unselected.</param>
-        public bool SetTileTexture(int tileIndex, Texture2D texture, bool temporary = false) {
-            if (!temporary) {
+        public bool SetTileTexture(int tileIndex, Texture2D texture, bool temporary = false)
+        {
+            if (!temporary)
+            {
                 pendingTextureArrayUpdate = true;
             }
             return SetTileTexture(tileIndex, texture, Color.white, temporary);
@@ -190,7 +235,8 @@ namespace HexasphereGrid {
         /// <param name="texture">Color.</param>
         /// <param name="tint">Optional tint color.</param>
         /// <param name="temporary">If set to <c>true</c> the tile is colored temporarily and returns to default color when it gets unselected.</param>
-        public bool SetTileTexture(int tileIndex, Texture2D texture, Color tint, bool temporary = false) {
+        public bool SetTileTexture(int tileIndex, Texture2D texture, Color tint, bool temporary = false)
+        {
             Material mat = GetCachedMaterial(tint, texture);
             return SetTileMaterial(tileIndex, mat, temporary);
         }
@@ -203,9 +249,11 @@ namespace HexasphereGrid {
         /// <param name="textureIndex">Texture index.</param>
         /// <param name="tint">Tint.</param>22
         /// <param name="temporary">If set to <c>true</c> temporary.</param>
-        public bool SetTileTexture(int tileIndex, int textureIndex, Color tint, bool temporary = false) {
+        public bool SetTileTexture(int tileIndex, int textureIndex, Color tint, bool temporary = false)
+        {
             Texture2D texture = null;
-            if (textureIndex >= 0 && textureIndex < textures.Length) {
+            if (textureIndex >= 0 && textureIndex < textures.Length)
+            {
                 texture = textures[textureIndex];
             }
             return SetTileTexture(tileIndex, texture, tint, temporary);
@@ -215,16 +263,22 @@ namespace HexasphereGrid {
         /// <summary>
         /// Sets texture rotation in radians of tile
         /// </summary>
-        public bool SetTileTextureRotation(int tileIndex, float rotation) {
+        public bool SetTileTextureRotation(int tileIndex, float rotation)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
-            if (rotation != tiles[tileIndex].rotation) {
+            if (rotation != tiles[tileIndex].rotation)
+            {
                 tiles[tileIndex].rotation = rotation;
                 Renderer r = tiles[tileIndex].renderer;
-                if (r != null) {
+                if (r != null)
+                {
                     UpdateTileMeshUV(tileIndex);
-                } else {
-                    if (tileIndex == lastHighlightedTileIndex) {
+                }
+                else
+                {
+                    if (tileIndex == lastHighlightedTileIndex)
+                    {
                         HideHighlightedTile();
                     }
                     pendingTextureArrayUpdate = true;
@@ -237,7 +291,8 @@ namespace HexasphereGrid {
         /// Returns tile texture rotation
         /// </summary>
         /// <param name="tileIndex">Tile index.</param>
-        public float GetTileTextureRotation(int tileIndex) {
+        public float GetTileTextureRotation(int tileIndex)
+        {
             if (!ValidTileIndex(tileIndex)) return 0;
             return tiles[tileIndex].rotation;
         }
@@ -248,7 +303,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <returns>The tile rotation.</returns>
         /// <param name="tileIndex">Tile index.</param>
-        public float GetTileVertex0Angle(int tileIndex) {
+        public float GetTileVertex0Angle(int tileIndex)
+        {
             if (!ValidTileIndex(tileIndex)) return 0;
 
             Tile tile = tiles[tileIndex];
@@ -256,20 +312,26 @@ namespace HexasphereGrid {
             Vector3[] tileVertices = tile.vertices;
             float angle;
 
-            if (tileVertices.Length == 5) {
+            if (tileVertices.Length == 5)
+            {
                 tileCenter = (tileVertices[0] + tileVertices[2] + tileVertices[3]) / 3f;
                 angle = 18.7f;
-            } else {
+            }
+            else
+            {
                 tileCenter = (tileVertices[0] + tileVertices[3]) / 2f;
                 angle = 0;
             }
             Vector3 v0 = tile.vertices[0] - tileCenter;
 
-            if (tileCenter.y > 0) {
+            if (tileCenter.y > 0)
+            {
                 Vector3 v1 = new Vector3(0, 0.5f, 0) - tileCenter;
                 v1 = Vector3.ProjectOnPlane(v1, tileCenter);
                 angle -= SignedAngle(v0, v1, tileCenter);
-            } else {
+            }
+            else
+            {
                 Vector3 v1 = new Vector3(0, -0.5f, 0) - tileCenter;
                 v1 = Vector3.ProjectOnPlane(v1, tileCenter);
                 angle -= SignedAngle(v0, v1, tileCenter) + 180f;
@@ -278,7 +340,8 @@ namespace HexasphereGrid {
         }
 
 
-        public int GetTileVertexCount(int tileIndex) {
+        public int GetTileVertexCount(int tileIndex)
+        {
             if (!ValidTileIndex(tileIndex)) return 0;
             return tiles[tileIndex].vertexPoints.Length;
         }
@@ -286,7 +349,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Sets texture rotation of tile so its top edge points to North
         /// </summary>
-        public bool SetTileTextureRotationToNorth(int tileIndex) {
+        public bool SetTileTextureRotationToNorth(int tileIndex)
+        {
             if (!ValidTileIndex(tileIndex)) return false;
 
             float angle = GetTileVertex0Angle(tileIndex);
@@ -299,15 +363,18 @@ namespace HexasphereGrid {
         /// Returns current tile's fill texture index (if texture exists in textures list).
         /// Texture index is from 1..32. It will return 0 if texture does not exist or it does not match any texture in the list of textures.
         /// </summary>
-        public int GetTileTextureIndex(int tileIndex) {
+        public int GetTileTextureIndex(int tileIndex)
+        {
             if (!ValidTileIndex(tileIndex)) return 0;
 
             Material mat = tiles[tileIndex].customMat;
-            if (mat == null || !mat.HasProperty(ShaderParams.MainTex)) {
+            if (mat == null || !mat.HasProperty(ShaderParams.MainTex))
+            {
                 return 0;
             }
             Texture2D tex = (Texture2D)mat.mainTexture;
-            for (int k = 1; k < textures.Length; k++) {
+            for (int k = 1; k < textures.Length; k++)
+            {
                 if (tex == textures[k])
                     return k;
             }
@@ -318,7 +385,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Sets if path finding can cross this tile.
         /// </summary>
-        public bool SetTileCanCross(int tileIndex, bool canCross) {
+        public bool SetTileCanCross(int tileIndex, bool canCross)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
             tiles[tileIndex].canCross = canCross;
@@ -330,7 +398,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Sets the crossing cost for this tile.
         /// </summary>
-        public bool SetTileCrossCost(int tileIndex, float crossCost) {
+        public bool SetTileCrossCost(int tileIndex, float crossCost)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
             tiles[tileIndex].crossCost = crossCost;
@@ -342,7 +411,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Gets the crossing cost for a given tile.
         /// </summary>
-        public float GetTileCrossCost(int tileIndex) {
+        public float GetTileCrossCost(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return 0;
             return tiles[tileIndex].crossCost;
@@ -352,7 +422,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Specifies the tile group (by default 1) used by FindPath tileGroupMask optional argument
         /// </summary>
-        public bool SetTileGroup(int tileIndex, int group) {
+        public bool SetTileGroup(int tileIndex, int group)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
             tiles[tileIndex].group = group;
@@ -363,7 +434,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns tile group (default 1)
         /// </summary>
-        public int GetTileGroup(int tileIndex) {
+        public int GetTileGroup(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return -1;
             return tiles[tileIndex].group;
@@ -375,7 +447,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="extrudeAmount">Extrude amount (0-1).</param>
-        public bool SetTileExtrudeAmount(int tileIndex, float extrudeAmount) {
+        public bool SetTileExtrudeAmount(int tileIndex, float extrudeAmount)
+        {
             if (!ValidTileIndex(tileIndex)) return false;
             Tile tile = tiles[tileIndex];
             if (extrudeAmount == tile.extrudeAmount)
@@ -387,30 +460,37 @@ namespace HexasphereGrid {
 
             tile.extrudeAmount = extrudeAmount;
 
-            if (tile.renderer != null) {
+            if (tile.renderer != null)
+            {
                 UpdateTileMeshVertexPositions(tileIndex);
             }
-            if (_highlightEnabled && tileIndex == lastHighlightedTileIndex) {
+            if (_highlightEnabled && tileIndex == lastHighlightedTileIndex)
+            {
                 RefreshHighlightedTile();
             }
 
-            if (!_extruded) {
+            if (!_extruded)
+            {
                 return SetTileVerticesElevation(tileIndex, extrudeAmount);
             }
 
             // Fast update uv info
-            if (_style != STYLE.Wireframe) {
+            if (_style != STYLE.Wireframe)
+            {
                 List<Vector4> uvShadedChunk = uvShaded[tile.uvShadedChunkIndex];
-                for (int k = 0; k < tile.uvShadedChunkLength; k++) {
+                for (int k = 0; k < tile.uvShadedChunkLength; k++)
+                {
                     Vector4 uv4 = uvShadedChunk[tile.uvShadedChunkStart + k];
                     uv4.w = tile.extrudeAmount;
                     uvShadedChunk[tile.uvShadedChunkStart + k] = uv4;
                 }
                 uvShadedDirty[tile.uvShadedChunkIndex] = true;
             }
-            if (_style != STYLE.Shaded) {
+            if (_style != STYLE.Shaded)
+            {
                 List<Vector2> uvWireChunk = uvWire[tile.uvWireChunkIndex];
-                for (int k = 0; k < tile.uvWireChunkLength; k++) {
+                for (int k = 0; k < tile.uvWireChunkLength; k++)
+                {
                     Vector2 uv2 = uvWireChunk[tile.uvWireChunkStart + k];
                     uv2.y = tile.extrudeAmount;
                     uvWireChunk[tile.uvWireChunkStart + k] = uv2;
@@ -427,7 +507,8 @@ namespace HexasphereGrid {
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="vertexIndex">Vertex index.</param>
         /// <param name="elevation">Elevation.</param>
-        public bool SetTileVertexElevation(int tileIndex, int vertexIndex, float elevation) {
+        public bool SetTileVertexElevation(int tileIndex, int vertexIndex, float elevation)
+        {
             if (tileIndex < 0 || tiles == null || tileIndex >= tiles.Length)
                 return false;
             Tile tile = tiles[tileIndex];
@@ -446,11 +527,13 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="elevation">Elevation.</param>
-        public bool SetTileVerticesElevation(int tileIndex, float elevation) {
+        public bool SetTileVerticesElevation(int tileIndex, float elevation)
+        {
             if (!ValidTileIndex(tileIndex)) return false;
             Tile tile = tiles[tileIndex];
             int vertexCount = tile.vertexPoints.Length;
-            for (int k = 0; k < vertexCount; k++) {
+            for (int k = 0; k < vertexCount; k++)
+            {
                 Point p = tile.vertexPoints[k];
                 p.elevation = elevation;
             }
@@ -464,7 +547,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="vertexIndex">Vertex index.</param>
-        public float GetTileVertexElevation(int tileIndex, int vertexIndex) {
+        public float GetTileVertexElevation(int tileIndex, int vertexIndex)
+        {
             if (tileIndex < 0 || tiles == null || tileIndex >= tiles.Length)
                 return 0;
             Tile tile = tiles[tileIndex];
@@ -481,39 +565,50 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tiles">Array of tiles.</param>
         /// <param name="extrudeAmount">Extrude amount (0-1).</param>
-        public void SetTileExtrudeAmount(Tile[] tiles, float extrudeAmount) {
+        public void SetTileExtrudeAmount(Tile[] tiles, float extrudeAmount)
+        {
             if (tiles == null)
                 return;
             extrudeAmount = Mathf.Clamp01(extrudeAmount);
-            for (int k = 0; k < tiles.Length; k++) {
+            for (int k = 0; k < tiles.Length; k++)
+            {
                 Tile tile = tiles[k];
-                if (extrudeAmount != tile.extrudeAmount) {
+                if (extrudeAmount != tile.extrudeAmount)
+                {
                     tile.extrudeAmount = extrudeAmount;
-                    if (tile.renderer != null) {
+                    if (tile.renderer != null)
+                    {
                         UpdateTileMeshVertexPositions(k);
-                        if (!_extruded) {
+                        if (!_extruded)
+                        {
                             SetTileVerticesElevation(k, extrudeAmount);
                         }
-                        if (_highlightEnabled && tile.index == lastHighlightedTileIndex) {
+                        if (_highlightEnabled && tile.index == lastHighlightedTileIndex)
+                        {
                             RefreshHighlightedTile();
                         }
                         if (!_extruded) continue;
                     }
                 }
                 // Fast update uv info
-                if (_style != STYLE.Invisible) {
-                    if (_style != STYLE.Wireframe) {
+                if (_style != STYLE.Invisible)
+                {
+                    if (_style != STYLE.Wireframe)
+                    {
                         List<Vector4> uvShadedChunk = uvShaded[tile.uvShadedChunkIndex];
-                        for (int j = 0; j < tile.uvShadedChunkLength; j++) {
+                        for (int j = 0; j < tile.uvShadedChunkLength; j++)
+                        {
                             Vector4 uv4 = uvShadedChunk[tile.uvShadedChunkStart + j];
                             uv4.w = tile.extrudeAmount;
                             uvShadedChunk[tile.uvShadedChunkStart + j] = uv4;
                         }
                         uvShadedDirty[tile.uvShadedChunkIndex] = true;
                     }
-                    if (_style != STYLE.Shaded) {
+                    if (_style != STYLE.Shaded)
+                    {
                         List<Vector2> uvWireChunk = uvWire[tile.uvWireChunkIndex];
-                        for (int j = 0; j < tile.uvWireChunkLength; j++) {
+                        for (int j = 0; j < tile.uvWireChunkLength; j++)
+                        {
                             Vector4 uv2 = uvWireChunk[tile.uvWireChunkStart + j];
                             uv2.y = tile.extrudeAmount;
                             uvWireChunk[tile.uvWireChunkStart + j] = uv2;
@@ -530,41 +625,52 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tiles">Array of tiles.</param>
         /// <param name="extrudeAmount">Extrude amount (0-1).</param>
-        public void SetTileExtrudeAmount(List<int> tileIndices, float extrudeAmount) {
+        public void SetTileExtrudeAmount(List<int> tileIndices, float extrudeAmount)
+        {
             if (tiles == null)
                 return;
             extrudeAmount = Mathf.Clamp01(extrudeAmount);
             int indicesCount = tileIndices.Count;
-            for (int k = 0; k < indicesCount; k++) {
+            for (int k = 0; k < indicesCount; k++)
+            {
                 int tileIndex = tileIndices[k];
                 Tile tile = tiles[tileIndex];
-                if (extrudeAmount != tile.extrudeAmount) {
+                if (extrudeAmount != tile.extrudeAmount)
+                {
                     tile.extrudeAmount = extrudeAmount;
-                    if (tile.renderer != null) {
+                    if (tile.renderer != null)
+                    {
                         UpdateTileMeshVertexPositions(k);
-                        if (!_extruded) {
+                        if (!_extruded)
+                        {
                             SetTileVerticesElevation(k, extrudeAmount);
                         }
-                        if (_highlightEnabled && tile.index == lastHighlightedTileIndex) {
+                        if (_highlightEnabled && tile.index == lastHighlightedTileIndex)
+                        {
                             RefreshHighlightedTile();
                         }
                         if (!_extruded) continue;
                     }
                 }
-                if (_style != STYLE.Invisible) {
+                if (_style != STYLE.Invisible)
+                {
                     // Fast update uv info
-                    if (_style != STYLE.Wireframe) {
+                    if (_style != STYLE.Wireframe)
+                    {
                         List<Vector4> uvShadedChunk = uvShaded[tile.uvShadedChunkIndex];
-                        for (int j = 0; j < tile.uvShadedChunkLength; j++) {
+                        for (int j = 0; j < tile.uvShadedChunkLength; j++)
+                        {
                             Vector4 uv4 = uvShadedChunk[tile.uvShadedChunkStart + j];
                             uv4.w = tile.extrudeAmount;
                             uvShadedChunk[tile.uvShadedChunkStart + j] = uv4;
                         }
                         uvShadedDirty[tile.uvShadedChunkIndex] = true;
                     }
-                    if (_style != STYLE.Shaded) {
+                    if (_style != STYLE.Shaded)
+                    {
                         List<Vector2> uvWireChunk = uvWire[tile.uvWireChunkIndex];
-                        for (int j = 0; j < tile.uvWireChunkLength; j++) {
+                        for (int j = 0; j < tile.uvWireChunkLength; j++)
+                        {
                             Vector4 uv2 = uvWireChunk[tile.uvWireChunkStart + j];
                             uv2.y = tile.extrudeAmount;
                             uvWireChunk[tile.uvWireChunkStart + j] = uv2;
@@ -581,7 +687,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tiles">List of tiles.</param>
         /// <param name="extrudeAmount">Extrude amount (0-1).</param>
-        public void SetTileExtrudeAmount(List<Tile> tiles, float extrudeAmount) {
+        public void SetTileExtrudeAmount(List<Tile> tiles, float extrudeAmount)
+        {
             Tile[] tempArray = tiles.ToArray();
             SetTileExtrudeAmount(tempArray, extrudeAmount);
         }
@@ -591,7 +698,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="tag">String data.</param>
-        public bool SetTileTag(int tileIndex, string tag) {
+        public bool SetTileTag(int tileIndex, string tag)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
             tiles[tileIndex].tag = tag;
@@ -603,7 +711,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="tag">Integer data.</param>
-        public bool SetTileTag(int tileIndex, int tag) {
+        public bool SetTileTag(int tileIndex, int tag)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
             tiles[tileIndex].tagInt = tag;
@@ -615,7 +724,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <returns>The tile string tag.</returns>
         /// <param name="tileIndex">Tile index.</param>
-        public string GetTileTag(int tileIndex) {
+        public string GetTileTag(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return null;
             return tiles[tileIndex].tag;
@@ -626,7 +736,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <returns>The tile string tag.</returns>
         /// <param name="tileIndex">Tile index.</param>
-        public int GetTileTagInt(int tileIndex) {
+        public int GetTileTagInt(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return 0;
             return tiles[tileIndex].tagInt;
@@ -636,14 +747,16 @@ namespace HexasphereGrid {
         /// <summary>
         /// Removes any extrusion amount from all tiles
         /// </summary>
-        public void ClearTilesExtrusion() {
+        public void ClearTilesExtrusion()
+        {
             SetTileExtrudeAmount(tiles, 0);
         }
 
         /// <summary>
         /// Returns whether path finding can cross this tile.
         /// </summary>
-        public bool GetTileCanCross(int tileIndex) {
+        public bool GetTileCanCross(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
             return tiles[tileIndex].canCross;
@@ -652,7 +765,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns current tile color.
         /// </summary>
-        public Color GetTileColor(int tileIndex, bool ignoreTemporaryColor = false) {
+        public Color GetTileColor(int tileIndex, bool ignoreTemporaryColor = false)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return _defaultShadedColor;
             Tile tile = tiles[tileIndex];
@@ -667,7 +781,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns current tile height or extrude amount.
         /// </summary>
-        public float GetTileExtrudeAmount(int tileIndex) {
+        public float GetTileExtrudeAmount(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return 0;
             return tiles[tileIndex].extrudeAmount;
@@ -676,7 +791,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Gets the neighbours indices of a given tile
         /// </summary>
-        public int[] GetTileNeighbours(int tileIndex) {
+        public int[] GetTileNeighbours(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return null;
             return tiles[tileIndex].neighboursIndices;
@@ -685,7 +801,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Gets the neighbours objects of a given tile
         /// </summary>
-        public Tile[] GetTileNeighboursTiles(int tileIndex) {
+        public Tile[] GetTileNeighboursTiles(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return null;
             return tiles[tileIndex].neighbours;
@@ -694,7 +811,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Gets the index of the tile on the exact opposite pole
         /// </summary>
-        public int GetTileAtPolarOpposite(int tileIndex) {
+        public int GetTileAtPolarOpposite(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return -1;
             return GetTileAtLocalPosition(-tiles[tileIndex].center);
@@ -706,14 +824,18 @@ namespace HexasphereGrid {
         /// <returns>The tiles within distance.</returns>
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="worldSpace">By default, distance is used in local space in the range of 0..1 (which is faster). Using world space = true will compute distances in world space which will apply the current transform to the examined tile centers.</param>
-        public List<int> GetTilesWithinDistance(int tileIndex, float distance, bool worldSpace = false) {
+        public List<int> GetTilesWithinDistance(int tileIndex, float distance, bool worldSpace = false)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return null;
 
             Vector3 refPos;
-            if (worldSpace) {
+            if (worldSpace)
+            {
                 refPos = GetTileCenter(tileIndex);
-            } else {
+            }
+            else
+            {
                 refPos = tiles[tileIndex].center;
             }
             float d2 = distance * distance;
@@ -722,23 +844,30 @@ namespace HexasphereGrid {
             processed[tileIndex] = true;
             List<int> results = new List<int>();
             int candidateLast = candidates.Count - 1;
-            while (candidateLast >= 0) {
+            while (candidateLast >= 0)
+            {
                 // Pop candidate
                 int t = candidates[candidateLast];
                 candidates.RemoveAt(candidateLast);
                 candidateLast--;
                 float dist;
-                if (worldSpace) {
+                if (worldSpace)
+                {
                     dist = Misc.Vector3SqrDistance(GetTileCenter(t), refPos);
-                } else {
+                }
+                else
+                {
                     dist = Misc.Vector3SqrDistance(tiles[t].center, refPos);
                 }
-                if (dist < d2) {
+                if (dist < d2)
+                {
                     results.Add(t);
                     processed[t] = true;
                     int[] nn = GetTileNeighbours(t);
-                    for (int k = 0; k < nn.Length; k++) {
-                        if (!processed.ContainsKey(nn[k])) {
+                    for (int k = 0; k < nn.Length; k++)
+                    {
+                        if (!processed.ContainsKey(nn[k]))
+                        {
                             candidates.Add(nn[k]);
                             candidateLast++;
                         }
@@ -755,13 +884,17 @@ namespace HexasphereGrid {
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="worldSpace">By default, distance is used in local space in the range of 0..1 (which is faster). Using world space = true will compute distances in world space which will apply the current transform to the examined tile centers.</param>
         /// <param name="criteria">A user defined function that accepts a single argument, the tile index, and must return a boolean value specifying if the tile is valid and should be included in the results or not.</param>
-        public List<int> GetTilesWithinDistance(int tileIndex, float distance, bool worldSpace, Func<int, bool> criteria) {
+        public List<int> GetTilesWithinDistance(int tileIndex, float distance, bool worldSpace, Func<int, bool> criteria)
+        {
             List<int> tiles = GetTilesWithinDistance(tileIndex, distance, worldSpace);
-            if (tiles != null) {
+            if (tiles != null)
+            {
                 int count = tiles.Count;
                 List<int> results = new List<int>(count);
-                for (int k = 0; k < count; k++) {
-                    if (criteria(tiles[k])) {
+                for (int k = 0; k < count; k++)
+                {
+                    if (criteria(tiles[k]))
+                    {
                         results.Add(tiles[k]);
                     }
                 }
@@ -778,43 +911,55 @@ namespace HexasphereGrid {
         /// <returns>The tiles within distance.</returns>
         /// <param name="maxSteps">Max number of steps.</param>
         /// <param name="usePathFinding">If true (by default), the algorithm takes into account if the destination tile can be reached using path-finding (checks if tiles can be crossed)</param>
-        public List<int> GetTilesWithinSteps(int tileIndex, int maxSteps, bool usePathFinding = true) {
+        public List<int> GetTilesWithinSteps(int tileIndex, int maxSteps, bool usePathFinding = true)
+        {
             if (!ValidTileIndex(tileIndex)) return null;
 
             List<int> candidates = new List<int>(GetTileNeighbours(tileIndex));
             HashSet<int> processed = new HashSet<int>(tileIndex);
             List<int> results = new List<int>();
 
-            if (usePathFinding) {
+            if (usePathFinding)
+            {
                 int candidateLast = candidates.Count - 1;
-                while (candidateLast >= 0) {
+                while (candidateLast >= 0)
+                {
                     // Pop candidate
                     int t = candidates[candidateLast];
                     candidates.RemoveAt(candidateLast);
                     candidateLast--;
                     List<int> tt = FindPath(tileIndex, t, maxSteps);
-                    if (tt != null && !processed.Contains(t)) {
+                    if (tt != null && !processed.Contains(t))
+                    {
                         results.Add(t);
                         processed.Add(t);
                         int[] nn = GetTileNeighbours(t);
                         int l = nn.Length;
-                        for (int k = 0; k < l; k++) {
-                            if (!processed.Contains(nn[k])) {
+                        for (int k = 0; k < l; k++)
+                        {
+                            if (!processed.Contains(nn[k]))
+                            {
                                 candidates.Add(nn[k]);
                                 candidateLast++;
                             }
                         }
                     }
                 }
-            } else {
+            }
+            else
+            {
                 List<int> resultsAtPreviousStep = new List<int> { tileIndex };
                 List<int> resultsAtCurrentStep = new List<int>();
-                for (int stepsFinished = 0; stepsFinished < maxSteps; stepsFinished++) {
+                for (int stepsFinished = 0; stepsFinished < maxSteps; stepsFinished++)
+                {
                     // Get all unique tiles adjacent to the results at the previous step that we haven't already processed
                     resultsAtCurrentStep.Clear();
-                    foreach (var prevIndex in resultsAtPreviousStep) {
-                        foreach (int neighbor in GetTileNeighbours(prevIndex)) {
-                            if (!processed.Contains(neighbor)) {
+                    foreach (var prevIndex in resultsAtPreviousStep)
+                    {
+                        foreach (int neighbor in GetTileNeighbours(prevIndex))
+                        {
+                            if (!processed.Contains(neighbor))
+                            {
                                 resultsAtCurrentStep.Add(neighbor);
                                 results.Add(neighbor);
                             }
@@ -834,13 +979,17 @@ namespace HexasphereGrid {
         /// <returns>The tiles within distance.</returns>
         /// <param name="maxSteps">Max number of steps.</param>
         /// <param name="criteria">A user defined function that accepts a single argument, the tile index, and must return a boolean value specifying if the tile is valid and should be included in the results or not.</param>
-        public List<int> GetTilesWithinSteps(int tileIndex, int maxSteps, Func<int, bool> criteria) {
+        public List<int> GetTilesWithinSteps(int tileIndex, int maxSteps, Func<int, bool> criteria)
+        {
             List<int> tiles = GetTilesWithinSteps(tileIndex, maxSteps);
-            if (tiles != null) {
+            if (tiles != null)
+            {
                 int count = tiles.Count;
                 List<int> results = new List<int>(count);
-                for (int k = 0; k < count; k++) {
-                    if (criteria(tiles[k])) {
+                for (int k = 0; k < count; k++)
+                {
+                    if (criteria(tiles[k]))
+                    {
                         results.Add(tiles[k]);
                     }
                 }
@@ -857,11 +1006,13 @@ namespace HexasphereGrid {
         /// <param name="minSteps">Min number of steps.</param>
         /// <param name="maxSteps">Max number of steps.</param>
         /// <param name="results">List of tile indices. Must be initialized.</param>
-        public int GetTilesWithinSteps(int tileIndex, int minSteps, int maxSteps, List<int> results) {
+        public int GetTilesWithinSteps(int tileIndex, int minSteps, int maxSteps, List<int> results)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return 0;
 
-            if (results == null) {
+            if (results == null)
+            {
                 Debug.LogError("GetTilesWithinStepsNonAlloc: results parameter must be initialized.");
                 return 0;
             }
@@ -870,26 +1021,32 @@ namespace HexasphereGrid {
             candidates.AddRange(GetTileNeighbours(tileIndex));
             Dictionary<int, bool> processed = GetTempDictionary<int, bool>(ref tmpDict); // dictionary is faster for value types than HashSet
             processed[tileIndex] = true;
-            for (int k = 0; k < candidates.Count; k++) {
+            for (int k = 0; k < candidates.Count; k++)
+            {
                 processed[candidates[k]] = true;
             }
             results.Clear();
             int candidateLast = candidates.Count - 1;
             List<int> tt = GetTempList<int>(ref tmpList);
-            while (candidateLast >= 0) {
+            while (candidateLast >= 0)
+            {
                 // Pop candidate
                 int t = candidates[candidateLast];
                 candidates.RemoveAt(candidateLast);
                 candidateLast--;
                 int pathLength = FindPath(tileIndex, t, tt, maxSteps);
-                if (pathLength > 0) {
-                    if (pathLength >= minSteps && pathLength <= maxSteps) {
+                if (pathLength > 0)
+                {
+                    if (pathLength >= minSteps && pathLength <= maxSteps)
+                    {
                         results.Add(t);
                     }
                     int[] nn = GetTileNeighbours(t);
-                    for (int k = 0; k < nn.Length; k++) {
+                    for (int k = 0; k < nn.Length; k++)
+                    {
                         int nindex = nn[k];
-                        if (!processed.ContainsKey(nindex)) {
+                        if (!processed.ContainsKey(nindex))
+                        {
                             processed[nindex] = true;
                             candidates.Add(nindex);
                             candidateLast++;
@@ -906,7 +1063,8 @@ namespace HexasphereGrid {
         /// <returns>The tiles within distance.</returns>
         /// <param name="minSteps">Min number of steps.</param>
         /// <param name="maxSteps">Max number of steps.</param>
-        public List<int> GetTilesWithinSteps(int tileIndex, int minSteps, int maxSteps) {
+        public List<int> GetTilesWithinSteps(int tileIndex, int minSteps, int maxSteps)
+        {
             List<int> results = new List<int>();
             int count = GetTilesWithinSteps(tileIndex, minSteps, maxSteps, results);
             return count == 0 ? null : results;
@@ -920,13 +1078,17 @@ namespace HexasphereGrid {
         /// <param name="minSteps">Min number of steps.</param>
         /// <param name="maxSteps">Max number of steps.</param>
         /// <param name="criteria">A user defined function that accepts a single argument, the tile index, and must return a boolean value specifying if the tile is valid and should be included in the results or not.</param>
-        public List<int> GetTilesWithinSteps(int tileIndex, int minSteps, int maxSteps, Func<int, bool> criteria) {
+        public List<int> GetTilesWithinSteps(int tileIndex, int minSteps, int maxSteps, Func<int, bool> criteria)
+        {
             List<int> tiles = GetTilesWithinSteps(tileIndex, minSteps, maxSteps);
-            if (tiles != null) {
+            if (tiles != null)
+            {
                 int count = tiles.Count;
                 List<int> results = new List<int>(count);
-                for (int k = 0; k < count; k++) {
-                    if (criteria(tiles[k])) {
+                for (int k = 0; k < count; k++)
+                {
+                    if (criteria(tiles[k]))
+                    {
                         results.Add(tiles[k]);
                     }
                 }
@@ -942,7 +1104,8 @@ namespace HexasphereGrid {
         /// <returns>The tile indices within two tiles.</returns>
         /// <param name="tileIndex1">Tile index1.</param>
         /// <param name="tileIndex2">Tile index2.</param>
-        public List<int> GetTilesWithinTwoTiles(int tileIndex1, int tileIndex2) {
+        public List<int> GetTilesWithinTwoTiles(int tileIndex1, int tileIndex2)
+        {
             return FindPath(tileIndex1, tileIndex2, 0, -1, true);
         }
 
@@ -950,18 +1113,23 @@ namespace HexasphereGrid {
         /// <summary>
         /// Hide a given tile
         /// </summary>
-        public void ClearTile(int tileIndex, bool clearTemporaryColor = false, bool clearAllColors = true, bool clearObstacles = true) {
+        public void ClearTile(int tileIndex, bool clearTemporaryColor = false, bool clearAllColors = true, bool clearObstacles = true)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return;
             Tile tile = tiles[tileIndex];
             Renderer tileRenderer = tile.renderer;
             tile.tempMat = null;
-            if (tileRenderer != null) {
+            if (tileRenderer != null)
+            {
                 tileRenderer.enabled = false;
             }
-            if (clearAllColors) {
-                if (tile.customMat != null) {
-                    if (tile.customMat.HasProperty(ShaderParams.MainTex) && tile.customMat.mainTexture != null) {
+            if (clearAllColors)
+            {
+                if (tile.customMat != null)
+                {
+                    if (tile.customMat.HasProperty(ShaderParams.MainTex) && tile.customMat.mainTexture != null)
+                    {
                         pendingTextureArrayUpdate = true;
                     }
                     tile.customMat = null;
@@ -969,12 +1137,14 @@ namespace HexasphereGrid {
                 pendingColorsUpdate = true;
                 Color32 matColor = _defaultShadedColor;
                 List<Color32> colorChunk = colorShaded[tile.uvShadedChunkIndex];
-                for (int k = 0; k < tile.uvShadedChunkLength; k++) {
+                for (int k = 0; k < tile.uvShadedChunkLength; k++)
+                {
                     colorChunk[tile.uvShadedChunkStart + k] = matColor;
                 }
                 colorShadedDirty[tile.uvShadedChunkIndex] = true;
             }
-            if (clearObstacles) {
+            if (clearObstacles)
+            {
                 tile.canCross = true;
             }
         }
@@ -983,8 +1153,10 @@ namespace HexasphereGrid {
         /// <summary>
         /// Hide all tiles
         /// </summary>
-        public void ClearTiles(bool clearTemporaryColors = false, bool clearAllColors = true, bool clearObstacles = true) {
-            for (int k = 0; k < tiles.Length; k++) {
+        public void ClearTiles(bool clearTemporaryColors = false, bool clearAllColors = true, bool clearObstacles = true)
+        {
+            for (int k = 0; k < tiles.Length; k++)
+            {
                 ClearTile(k, clearTemporaryColors, clearAllColors, clearObstacles);
             }
             ResetHighlightMaterial();
@@ -993,19 +1165,23 @@ namespace HexasphereGrid {
         /// <summary>
         /// Destroys a colored tile
         /// </summary>
-        public void DestroyTile(int tileIndex) {
+        public void DestroyTile(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return;
-            if (lastHighlightedTileIndex >= 0 && tileIndex == lastHighlightedTileIndex) {
+            if (lastHighlightedTileIndex >= 0 && tileIndex == lastHighlightedTileIndex)
+            {
                 HideHighlightedTile();
             }
-            if (tiles[tileIndex].customMat != null) {
+            if (tiles[tileIndex].customMat != null)
+            {
                 tiles[tileIndex].customMat = null;
                 pendingColorsUpdate = true;
                 pendingTextureArrayUpdate = true;
                 colorShadedDirty[tiles[tileIndex].uvShadedChunkIndex] = true;
             }
-            if (tiles[tileIndex].renderer != null) {
+            if (tiles[tileIndex].renderer != null)
+            {
                 DestroyImmediate(tiles[tileIndex].renderer.gameObject);
                 tiles[tileIndex].renderer = null;
             }
@@ -1014,10 +1190,12 @@ namespace HexasphereGrid {
         /// <summary>
         /// Toggles tile visibility
         /// </summary>
-        public bool ToggleTile(int tileIndex, bool visible) {
+        public bool ToggleTile(int tileIndex, bool visible)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
-            if (tiles[tileIndex].visible != visible) {
+            if (tiles[tileIndex].visible != visible)
+            {
                 tiles[tileIndex].visible = visible;
                 needRegenerate = true;
                 shouldUpdateMaterialProperties = true;
@@ -1029,17 +1207,20 @@ namespace HexasphereGrid {
         /// <summary>
         /// Alternate call for ToggleTile/HideTile
         /// </summary>
-        public void SetTileVisible(int tileIndex, bool visible) {
+        public void SetTileVisible(int tileIndex, bool visible)
+        {
             ToggleTile(tileIndex, visible);
         }
 
         /// <summary>
         /// Hides a colored tile
         /// </summary>
-        public bool HideTile(int tileIndex) {
+        public bool HideTile(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
-            if (tiles[tileIndex].visible) {
+            if (tiles[tileIndex].visible)
+            {
                 tiles[tileIndex].visible = false;
                 needRegenerate = true;
                 shouldUpdateMaterialProperties = true;
@@ -1051,10 +1232,12 @@ namespace HexasphereGrid {
         /// <summary>
         /// Shows a colored tile
         /// </summary>
-        public bool ShowTile(int tileIndex) {
+        public bool ShowTile(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return false;
-            if (!tiles[tileIndex].visible) {
+            if (!tiles[tileIndex].visible)
+            {
                 tiles[tileIndex].visible = true;
                 needRegenerate = true;
                 shouldUpdateMaterialProperties = true;
@@ -1070,15 +1253,18 @@ namespace HexasphereGrid {
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="worldSpace">If set to <c>true</c> it returns the world space coordinates.</param>
         /// <param name="fitToSphere">The returned position is fitted to the sphere. A tile is a flat polygon so the center doesn't match exactly the position on the sphere surface. By default, this method returns the surface position. Passing false to this argument will return the real center of the tile.</param>
-        public Vector3 GetTileCenter(int tileIndex, bool worldSpace = true, bool includeExtrusion = true, bool fitToSphere = true) {
+        public Vector3 GetTileCenter(int tileIndex, bool worldSpace = true, bool includeExtrusion = true, bool fitToSphere = true)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return Misc.Vector3zero;
             Tile tile = tiles[tileIndex];
             Vector3 v = fitToSphere ? tile.center : tile.polygonCenter;
-            if (includeExtrusion && _extruded) {
+            if (includeExtrusion && _extruded)
+            {
                 v *= 1.0f + tile.extrudeAmount * _extrudeMultiplier;
             }
-            if (worldSpace) {
+            if (worldSpace)
+            {
                 v = transform.TransformPoint(v);
             }
             return v;
@@ -1088,14 +1274,16 @@ namespace HexasphereGrid {
         /// <summary>
         /// Given a position, adjusts it to the surface of the underneath tile including extrusion
         /// </summary>
-        public Vector3 GetExtrudedPosition(Vector3 position, bool worldSpace) {
+        public Vector3 GetExtrudedPosition(Vector3 position, bool worldSpace)
+        {
             int tileIndex = GetTileAtPosition(position, worldSpace);
             if (tileIndex < 0) return position;
 
             Tile tile = tiles[tileIndex];
             Vector3 v = worldSpace ? (position - transform.position).normalized * 0.5f : position;
             v *= 1.0f + tile.extrudeAmount * _extrudeMultiplier;
-            if (worldSpace) {
+            if (worldSpace)
+            {
                 v = transform.TransformPoint(v);
             }
             return v;
@@ -1104,19 +1292,24 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns the center of the tile in world space coordinates.
         /// </summary>
-        public Vector3 GetTileVertexPosition(int tileIndex, int vertexIndex, bool worldSpace = true, bool includeExtrusion = true) {
+        public Vector3 GetTileVertexPosition(int tileIndex, int vertexIndex, bool worldSpace = true, bool includeExtrusion = true)
+        {
             if (!ValidTileIndex(tileIndex)) return Misc.Vector3zero;
             Tile tile = tiles[tileIndex];
             if (vertexIndex < 0 || vertexIndex >= tile.vertexPoints.Length)
                 return Misc.Vector3zero;
             Vector3 v;
-            if (includeExtrusion && _extruded) {
+            if (includeExtrusion && _extruded)
+            {
                 v = tile.vertices[vertexIndex];
                 v *= 1.0f + tile.extrudeAmount * _extrudeMultiplier;
-            } else {
+            }
+            else
+            {
                 v = tile.vertexPoints[vertexIndex].projectedVector3;
             }
-            if (worldSpace) {
+            if (worldSpace)
+            {
                 v = transform.TransformPoint(v);
             }
             return v;
@@ -1126,7 +1319,8 @@ namespace HexasphereGrid {
         /// Creates a tile gameobject and position it exactly over the tile position on the hexasphere
         /// </summary>
         /// <param name="extrusionAmount">Use -1 to use the default extrusion values</param>
-        public GameObject GenerateTileGameObject(int tileIndex, Material material, float extrusionAmount = -1) {
+        public GameObject GenerateTileGameObject(int tileIndex, Material material = null, float extrusionAmount = -1)
+        {
             if (!ValidTileIndex(tileIndex)) return null;
             Tile tile = tiles[tileIndex];
             if (tile.renderer != null) DestroyImmediate(tile.renderer.gameObject);
@@ -1139,7 +1333,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <returns>The tile lat lon.</returns>
         /// <param name="tileIndex">Tile index.</param>
-        public Vector2 GetTileLatLon(int tileIndex) {
+        public Vector2 GetTileLatLon(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return Misc.Vector2zero;
             Tile tile = tiles[tileIndex];
@@ -1156,7 +1351,8 @@ namespace HexasphereGrid {
         /// <returns>The vertex lat lon.</returns>
         /// <param name="tileIndex">Tile index.</param>
         /// <param name="vertexIndex">Vertex index (0-5 in an hexagon, 0-4 in a pentagon).</param>
-        public Vector2 GetTileVertexLatLon(int tileIndex, int vertexIndex) {
+        public Vector2 GetTileVertexLatLon(int tileIndex, int vertexIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return Misc.Vector2zero;
             Tile tile = tiles[tileIndex];
@@ -1172,7 +1368,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <returns>The tile lat lon.</returns>
         /// <param name="tileIndex">Tile index.</param>
-        public Vector2 GetTileUV(int tileIndex) {
+        public Vector2 GetTileUV(int tileIndex)
+        {
             if (tileIndex < 0 || tileIndex >= tiles.Length)
                 return Misc.Vector2zero;
             Tile tile = tiles[tileIndex];
@@ -1189,7 +1386,8 @@ namespace HexasphereGrid {
         /// </summary>
         /// <param name="uv">UV coordinates.</param>
         /// <returns>The index of the tile</returns>
-        public int GetTileAtUV(Vector2 uv) {
+        public int GetTileAtUV(Vector2 uv)
+        {
             float lon = uv.x * 360f - 180f;
             float lat = (uv.y - 0.5f) * 2f * 90f;
             Vector3 localPos = GetSpherePointFromLatLon(lat, lon);
@@ -1202,11 +1400,13 @@ namespace HexasphereGrid {
         /// <returns>The tile at position.</returns>
         /// <param name="position">Position.</param>
         /// <param name="worldSpacen">If true, the positino passed is in world space.</param>
-        public int GetTileAtPosition(Vector3 position, bool worldSpace = true) {
+        public int GetTileAtPosition(Vector3 position, bool worldSpace = true)
+        {
             if (tiles == null)
                 return -1;
 
-            if (worldSpace) {
+            if (worldSpace)
+            {
                 position = transform.InverseTransformPoint(position);
             }
             return GetTileAtLocalPosition(position);
@@ -1219,7 +1419,8 @@ namespace HexasphereGrid {
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
         /// <returns></returns>
-        public int GetTileAtLatLon(float latitude, float longitude) {
+        public int GetTileAtLatLon(float latitude, float longitude)
+        {
             Vector3 localPosition = GetSpherePointFromLatLon(latitude, longitude);
             return GetTileAtLocalPosition(localPosition);
         }
@@ -1227,11 +1428,14 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns a jSON formatted representation of current tiles settings.
         /// </summary>
-        public string GetTilesConfigurationData() {
+        public string GetTilesConfigurationData()
+        {
             List<TileSaveData> tsd = new List<TileSaveData>();
-            for (int k = 0; k < tiles.Length; k++) {
+            for (int k = 0; k < tiles.Length; k++)
+            {
                 Tile tile = tiles[k];
-                if (tile.tagInt != 0 || tile.customMat != null || !string.IsNullOrEmpty(tile.tag)) {
+                if (tile.tagInt != 0 || tile.customMat != null || !string.IsNullOrEmpty(tile.tag))
+                {
                     TileSaveData sd = new TileSaveData();
                     sd.tileIndex = k;
                     sd.color = tile.customMat.color;
@@ -1249,12 +1453,14 @@ namespace HexasphereGrid {
         /// <summary>
         /// Applies a configuration data as json to a tile
         /// </summary>
-        public void SetTilesConfigurationData(string json) {
+        public void SetTilesConfigurationData(string json)
+        {
             if (tiles == null)
                 return;
 
             HexasphereSaveData hsd = JsonUtility.FromJson<HexasphereSaveData>(json);
-            for (int k = 0; k < hsd.tiles.Length; k++) {
+            for (int k = 0; k < hsd.tiles.Length; k++)
+            {
                 int tileIndex = hsd.tiles[k].tileIndex;
                 if (tileIndex < 0 || tileIndex >= tiles.Length)
                     continue;
@@ -1267,7 +1473,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns true if a tile is visible from a given camera
         /// </summary>
-        public bool IsTileVisibleFromCamera(int tileIndex, Camera cam) {
+        public bool IsTileVisibleFromCamera(int tileIndex, Camera cam)
+        {
             // Is in camera frustum?
             Vector3 pos = GetTileCenter(tileIndex);
             Vector3 viewportPos = cam.WorldToViewportPoint(pos);
@@ -1285,7 +1492,8 @@ namespace HexasphereGrid {
         /// <summary>
         /// Returns the collision point of a ray on the hexasphere tiles
         /// </summary>
-        public bool Raycast(Ray ray, out Vector3 hitPosition) {
+        public bool Raycast(Ray ray, out Vector3 hitPosition)
+        {
             if (!GetHitPoint(ray, out hitPosition)) return false;
             return GetTileInRayDirection(ray, hitPosition, out hitPosition) >= 0;
         }

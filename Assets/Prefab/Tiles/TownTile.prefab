@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7981180225580612396}
+  - component: {fileID: 1332633570711357840}
   m_Layer: 0
   m_Name: TownTile
   m_TagString: Untagged
@@ -37,6 +38,18 @@ Transform:
   - {fileID: 1628119222068876851}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1332633570711357840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4712957152022180866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bf6f64785b8e94e89e715030c1846c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &643851834402147446
 PrefabInstance:
   m_ObjectHideFlags: 0

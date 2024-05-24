@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 
 [CreateAssetMenu(fileName = "WorldShapeSettings", menuName = "ScriptableObjects/World/ShapeSettings", order = 1)]
 public class WorldShapeSettings : ScriptableObject

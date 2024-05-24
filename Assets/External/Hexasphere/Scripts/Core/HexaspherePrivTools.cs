@@ -1,41 +1,45 @@
 using UnityEngine;
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
-namespace HexasphereGrid {
+namespace HexasphereGrid
+{
 
 
-	public partial class Hexasphere : MonoBehaviour {
+    public partial class Hexasphere : MonoBehaviour
+    {
 
-		Color[] heights, waters;
-		int heightMapWidth, heightMapHeight;
-		Color[] gradientColors;
-		int rampWidth;
+        Color[] heights, waters;
+        int heightMapWidth, heightMapHeight;
+        Color[] gradientColors;
+        int rampWidth;
 
 
-		void LoadRampColors (Texture2D rampColors) {
-			if (rampColors == null) {
-				if (defaultRampTexture == null) {
-					defaultRampTexture = Resources.Load<Texture2D> ("Textures/HexasphereDefaultRampTex");
-				}
-				if (defaultRampTexture != null) {
-					gradientColors = defaultRampTexture.GetPixels ();
-					rampWidth = defaultRampTexture.width;
-				}
-			} else {
-				gradientColors = rampColors.GetPixels ();
-				rampWidth = rampColors.width;
-			}
-		}
+        void LoadRampColors(Texture2D rampColors)
+        {
+            if (rampColors == null)
+            {
+                if (defaultRampTexture == null)
+                {
+                    defaultRampTexture = Resources.Load<Texture2D>("Textures/HexasphereDefaultRampTex");
+                }
+                if (defaultRampTexture != null)
+                {
+                    gradientColors = defaultRampTexture.GetPixels();
+                    rampWidth = defaultRampTexture.width;
+                }
+            }
+            else
+            {
+                gradientColors = rampColors.GetPixels();
+                rampWidth = rampColors.width;
+            }
+        }
 
 
         /// <summary>
         /// Converts latitude/longitude/altitude to sphere coordinates.
         /// </summary>
-        Vector3 GetSpherePointFromLatLon(float lat, float lon) {
+        Vector3 GetSpherePointFromLatLon(float lat, float lon)
+        {
             float phi = lat * 0.0174532924f;
             float theta = (lon + 90.0f) * 0.0174532924f;
             float cosPhi = Mathf.Cos(phi);

@@ -1,12 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 /// <summary>
 /// This class provides utility functions for generating noise.
 /// </summary>
 public static class NoiseUtility
 {
+    static int seed;
+
+    /// <summary>
+    /// Initialize static instance with some defined configuration
+    /// </summary>
+    /// <param name="seed">The seed to set for the NoiseUtility</param>
+    public static void InitState(int seed)
+    {
+        NoiseUtility.seed = seed;
+    }
     /// <summary>
     /// This function generates Fractal Brownian Motion (FBM) noise.
     // FBM is a type of noise that combines multiple layers of Simplex noise.
@@ -27,7 +33,7 @@ public static class NoiseUtility
         for (int i = 0; i < oct; i++)
         {
             // Generate a layer of noise and add it to the total noise.
-            total += OpenSimplex2S.Noise2(1, x * frequency, y * frequency) * amplitude;
+            total += OpenSimplex2S.Noise2(seed, x * frequency, y * frequency) * amplitude;
 
             // Add the amplitude to the maximum possible value.
             maxValue += amplitude;

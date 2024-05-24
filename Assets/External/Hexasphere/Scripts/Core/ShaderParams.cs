@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 
-namespace HexasphereGrid {
+namespace HexasphereGrid
+{
 
-    public static class ShaderParams {
+    public static class ShaderParams
+    {
 
         public static int MainTex = Shader.PropertyToID("_MainTex");
         public static int BaseMap = Shader.PropertyToID("_BaseMap");

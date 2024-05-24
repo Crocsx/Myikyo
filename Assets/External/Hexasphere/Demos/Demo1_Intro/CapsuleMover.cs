@@ -1,17 +1,20 @@
-﻿using UnityEngine;
-using HexasphereGrid;
+﻿using HexasphereGrid;
 using System.Collections;
+using UnityEngine;
 
-namespace HexasphereGrid_Demos {
+namespace HexasphereGrid_Demos
+{
 
-    public class CapsuleMover : MonoBehaviour {
+    public class CapsuleMover : MonoBehaviour
+    {
 
         public float duration = 2;
 
         Hexasphere hexa;
         float startTime;
 
-        void Start() {
+        void Start()
+        {
             hexa = Hexasphere.GetInstance("Hexasphere");
             // event handler -> trigger capsule movement when clicking on a tile
             hexa.OnTileClick += Hexa_OnTileClick;
@@ -20,12 +23,14 @@ namespace HexasphereGrid_Demos {
             AlignToSurface();
         }
 
-        private void OnDestroy() {
+        private void OnDestroy()
+        {
             // remove event handler
             hexa.OnTileClick -= Hexa_OnTileClick;
         }
 
-        private void Hexa_OnTileClick(Hexasphere hexa, int tileIndex) {
+        private void Hexa_OnTileClick(Hexasphere hexa, int tileIndex)
+        {
             StopAllCoroutines();
             // get start and end positions and annotate that we're moving the capsule
             Vector3 endPosition = hexa.GetTileCenter(tileIndex, worldSpace: false);
@@ -33,14 +38,16 @@ namespace HexasphereGrid_Demos {
         }
 
         // Update is called once per frame
-        IEnumerator MoveCapsule(Vector3 endPosition) {
+        IEnumerator MoveCapsule(Vector3 endPosition)
+        {
 
             startTime = Time.time;
             Vector3 startPosition = transform.localPosition;
             Debug.Log("Moving from " + startPosition + " to " + endPosition);
 
             float t = 0;
-            while (t < 1f) {
+            while (t < 1f)
+            {
 
                 // Compute next position
                 t = (Time.time - startTime) / duration;
@@ -58,7 +65,8 @@ namespace HexasphereGrid_Demos {
             }
         }
 
-        void AlignToSurface() {
+        void AlignToSurface()
+        {
             transform.LookAt(hexa.transform.position);
             transform.Rotate(-90, 0, 0, Space.Self);
         }

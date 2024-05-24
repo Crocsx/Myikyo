@@ -1,10 +1,11 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-namespace HexasphereGrid {
+namespace HexasphereGrid
+{
 
-    public partial class Tile {
+    public partial class Tile
+    {
 
         #region Public properties
 
@@ -41,22 +42,29 @@ namespace HexasphereGrid {
         /// <summary>
         /// Gets the vertices in local space coordinates. Note that the grid contains a few pentagons.
         /// </summary>
-        public Vector3[] vertices {
-            get {
-                if (!_verticesComputed) {
+        public Vector3[] vertices
+        {
+            get
+            {
+                if (!_verticesComputed)
+                {
                     ComputeVertices();
                 }
                 return _vertices;
             }
         }
 
-        public Vector3 polygonCenter {
-            get {
-                if (!_verticesComputed) {
+        public Vector3 polygonCenter
+        {
+            get
+            {
+                if (!_verticesComputed)
+                {
                     ComputeVertices();
                 }
                 int vertexCount = _vertices.Length;
-                if (vertexCount == 6) {
+                if (vertexCount == 6)
+                {
                     return (_vertices[0] + _vertices[3]) / 2f;
                 }
                 // pentagon
@@ -68,9 +76,12 @@ namespace HexasphereGrid {
         /// <summary>
         /// Gets the neighbours tiles.
         /// </summary>
-        public Tile[] neighbours {
-            get {
-                if (!_neighboursComputed) {
+        public Tile[] neighbours
+        {
+            get
+            {
+                if (!_neighboursComputed)
+                {
                     ComputeNeighbours();
                 }
                 return _neighbours;
@@ -81,9 +92,12 @@ namespace HexasphereGrid {
         /// <summary>
         /// Gets the neighbours tiles indices.
         /// </summary>
-        public int[] neighboursIndices {
-            get {
-                if (!_neighboursComputed) {
+        public int[] neighboursIndices
+        {
+            get
+            {
+                if (!_neighboursComputed)
+                {
                     ComputeNeighbours();
                 }
                 return _neighboursIndices;
@@ -176,7 +190,8 @@ namespace HexasphereGrid {
         bool _neighboursComputed;
         static readonly Triangle[] tempTriangles = new Triangle[20];
 
-        public Tile(Point centerPoint, int index) {
+        public Tile(Point centerPoint, int index)
+        {
             this.index = index;
             this.centerPoint = centerPoint;
             this.centerPoint.tile = this;
@@ -185,12 +200,14 @@ namespace HexasphereGrid {
             int facesCount = centerPoint.GetOrderedTriangles(tempTriangles);
             vertexPoints = new Point[facesCount];
 
-            for (int f = 0; f < facesCount; f++) {
+            for (int f = 0; f < facesCount; f++)
+            {
                 vertexPoints[f] = tempTriangles[f].GetCentroid();
             }
 
             // resort if wrong order
-            if (facesCount == 6) {
+            if (facesCount == 6)
+            {
                 Vector3 p0 = (Vector3)vertexPoints[0];
                 Vector3 p1 = (Vector3)vertexPoints[1];
                 Vector3 p5 = (Vector3)vertexPoints[5];
@@ -198,7 +215,8 @@ namespace HexasphereGrid {
                 Vector3 v1 = p5 - p0;
                 Vector3 cp = Vector3.Cross(v0, v1);
                 float dp = Vector3.Dot(cp, p1);
-                if (dp < 0) {
+                if (dp < 0)
+                {
                     Point aux;
                     aux = vertexPoints[0];
                     vertexPoints[0] = vertexPoints[5];
@@ -210,7 +228,9 @@ namespace HexasphereGrid {
                     vertexPoints[2] = vertexPoints[3];
                     vertexPoints[3] = aux;
                 }
-            } else if (facesCount == 5) {
+            }
+            else if (facesCount == 5)
+            {
                 Vector3 p0 = (Vector3)vertexPoints[0];
                 Vector3 p1 = (Vector3)vertexPoints[1];
                 Vector3 p4 = (Vector3)vertexPoints[4];
@@ -218,7 +238,8 @@ namespace HexasphereGrid {
                 Vector3 v1 = p4 - p0;
                 Vector3 cp = Vector3.Cross(v0, v1);
                 float dp = Vector3.Dot(cp, p1);
-                if (dp < 0) {
+                if (dp < 0)
+                {
                     Point aux;
                     aux = vertexPoints[0];
                     vertexPoints[0] = vertexPoints[4];
@@ -233,14 +254,18 @@ namespace HexasphereGrid {
         static readonly List<int> tempInt = new List<int>(6);
         static readonly List<Tile> temp = new List<Tile>(6);
 
-        void ComputeNeighbours() {
+        void ComputeNeighbours()
+        {
             tempInt.Clear();
             temp.Clear();
-            for (int k = 0; k < centerPoint.triangleCount; k++) {
+            for (int k = 0; k < centerPoint.triangleCount; k++)
+            {
                 Triangle other = centerPoint.triangles[k];
-                for (int j = 0; j < 3; j++) {
+                for (int j = 0; j < 3; j++)
+                {
                     Tile tile = other.points[j].tile;
-                    if (tile != null && other.points[j] != centerPoint && !tempInt.Contains(tile.index)) {
+                    if (tile != null && other.points[j] != centerPoint && !tempInt.Contains(tile.index))
+                    {
                         temp.Add(tile);
                         tempInt.Add(tile.index);
                     }
@@ -251,10 +276,12 @@ namespace HexasphereGrid {
             _neighboursComputed = true;
         }
 
-        public void ComputeVertices() {
+        public void ComputeVertices()
+        {
             int l = vertexPoints.Length;
             _vertices = new Vector3[l];
-            for (int k = 0; k < l; k++) {
+            for (int k = 0; k < l; k++)
+            {
                 _vertices[k] = vertexPoints[k].projectedVector3;
             }
             _verticesComputed = true;

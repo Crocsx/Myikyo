@@ -1,15 +1,16 @@
-using UnityEngine;
-using UnityEditor;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using UnityEngine.Rendering;
+using System.IO;
 using System.Reflection;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
 
-namespace HexasphereGrid {
+namespace HexasphereGrid
+{
     [CustomEditor(typeof(Hexasphere)), CanEditMultipleObjects]
-    public class HexasphereEditor : Editor {
+    public class HexasphereEditor : Editor
+    {
 
         GUIStyle titleLabelStyle, blackBack;
         Color titleColor;
@@ -35,7 +36,8 @@ namespace HexasphereGrid {
 
         Texture2D _headerTexture;
 
-        void OnEnable() {
+        void OnEnable()
+        {
             titleColor = EditorGUIUtility.isProSkin ? new Color(0.52f, 0.66f, 0.9f) : new Color(0.12f, 0.16f, 0.4f);
             style = serializedObject.FindProperty("_style");
             numDivisions = serializedObject.FindProperty("_numDivisions");
@@ -102,7 +104,8 @@ namespace HexasphereGrid {
 
             sb = new StringBuilder();
             hexa = (Hexasphere)target;
-            if (hexa.tiles == null) {
+            if (hexa.tiles == null)
+            {
                 hexa.Init();
             }
             divisions = hexa.numDivisions;
@@ -113,10 +116,12 @@ namespace HexasphereGrid {
             HideEditorMesh();
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             serializedObject.UpdateIfRequiredOrScript();
 
-            if (titleLabelStyle == null) {
+            if (titleLabelStyle == null)
+            {
                 titleLabelStyle = new GUIStyle(EditorStyles.label);
             }
             titleLabelStyle.normal.textColor = titleColor;
@@ -135,8 +140,10 @@ namespace HexasphereGrid {
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Hexasphere Settings", titleLabelStyle);
-            if (GUILayout.Button("Help", GUILayout.Width(40))) {
-                if (!EditorUtility.DisplayDialog("Hexasphere Grid System", "To learn more about a property in this inspector move the mouse over the label for a quick description (tooltip).\n\nPlease check README file in the root of the asset for details and contact support.\n\nIf you like Hexasphere Grid System, please rate it on the Asset Store. For feedback and suggestions visit our support forum on kronnect.com.", "Close", "Visit Support Forum")) {
+            if (GUILayout.Button("Help", GUILayout.Width(40)))
+            {
+                if (!EditorUtility.DisplayDialog("Hexasphere Grid System", "To learn more about a property in this inspector move the mouse over the label for a quick description (tooltip).\n\nPlease check README file in the root of the asset for details and contact support.\n\nIf you like Hexasphere Grid System, please rate it on the Asset Store. For feedback and suggestions visit our support forum on kronnect.com.", "Close", "Visit Support Forum"))
+                {
                     Application.OpenURL("http://kronnect.com/taptapgo");
                 }
             }
@@ -146,13 +153,15 @@ namespace HexasphereGrid {
 
             EditorGUILayout.BeginHorizontal();
             divisions = EditorGUILayout.IntSlider(new GUIContent("Divisions", "Number of divisions during the generation of the hexasphere."), divisions, 1, 200);
-            if (GUILayout.Button("Set")) {
+            if (GUILayout.Button("Set"))
+            {
                 numDivisions.intValue = divisions;
             }
             EditorGUILayout.EndHorizontal();
 
 
-            if (hexa != null) {
+            if (hexa != null)
+            {
                 EditorGUILayout.LabelField("Tile Count", hexa.tiles.Length.ToString());
             }
 
@@ -160,7 +169,8 @@ namespace HexasphereGrid {
             EditorGUILayout.PropertyField(smartEdges, new GUIContent("Smart Edges", "Only renders edges between two tiles with different materials."));
             GUI.enabled = true;
             EditorGUILayout.PropertyField(transparent, new GUIContent("Transparent", "Enable transparency support."));
-            if (transparent.boolValue) {
+            if (transparent.boolValue)
+            {
                 EditorGUILayout.PropertyField(transparencyTiles, new GUIContent("   Tiles Alpha", "Global transparency for tiles."));
                 EditorGUILayout.PropertyField(transparencyZWrite, new GUIContent("   ZWrite", "Enable writing to z-buffer even in transparent mode."));
                 EditorGUILayout.PropertyField(transparencyDoubleSided, new GUIContent("   Double Sided", "Disabled back face culling."));
@@ -169,7 +179,8 @@ namespace HexasphereGrid {
             if (invertedMode.boolValue)
                 GUI.enabled = false;
             EditorGUILayout.PropertyField(extruded, new GUIContent("Extruded", "Enable to allow extrusion of tiles."));
-            if (extruded.boolValue) {
+            if (extruded.boolValue)
+            {
                 EditorGUILayout.PropertyField(extrudeMultiplier, new GUIContent("   Multiplier", "Global extrusion multiplier."));
                 EditorGUILayout.PropertyField(bevel, new GUIContent("   Bevel", "Apply a bevel effect."));
                 EditorGUILayout.PropertyField(transparencyCull, new GUIContent("   Cull Back Tiles", "Prevents rendering of back side tiles."));
@@ -178,7 +189,8 @@ namespace HexasphereGrid {
             }
             GUI.enabled = true;
             EditorGUILayout.PropertyField(wireframeColor, new GUIContent("Wireframe Color", "Color for the wireframe."));
-            if (extruded.boolValue) {
+            if (extruded.boolValue)
+            {
                 EditorGUILayout.PropertyField(wireframeColorFromTile, new GUIContent("   Color From Tile", "Use tile color as a base color for the wireframe."));
                 EditorGUILayout.PropertyField(wireframeIntensity, new GUIContent("   Intensity", "Darkens or lightens the wireframe."));
             }
@@ -188,24 +200,26 @@ namespace HexasphereGrid {
             EditorGUILayout.PropertyField(lighting, new GUIContent("Use Lighting", "If the hexasphere geometry can cast shadows over itself or other geometry, and also be influenced by the directional light."));
             EditorGUILayout.PropertyField(ambientColor, new GUIContent("Ambient Color", "Ambient color is added to the final tile color."));
             EditorGUILayout.PropertyField(minimumLight, new GUIContent("Minimum Light", "Minimum lighting applied to all tiles."));
-            if (!extruded.boolValue) {
+            if (!extruded.boolValue)
+            {
                 EditorGUILayout.PropertyField(specularTint, new GUIContent("Specular Tint", "Color for the specular lighting."));
                 EditorGUILayout.PropertyField(smoothness, new GUIContent("Smoothness", "Surface smoothness whith is applied to the specular lighting."));
             }
-            if (GraphicsSettings.currentRenderPipeline == null) {
+            if (GraphicsSettings.currentRenderPipeline == null)
+            {
                 EditorGUILayout.PropertyField(castShadows, new GUIContent("Cast Shadows", "If hexasphere can cast shadows."));
                 EditorGUILayout.PropertyField(receiveShadows, new GUIContent("Receive Shadows", "If hexasphere can receive shadows."));
             }
             EditorGUILayout.PropertyField(tileTextureSize, new GUIContent("Tile Texture Size", "Textures assigned to tiles will be rescaled to this size if different. Note that textures should be marked as readable."));
             EditorGUILayout.PropertyField(tileTextureStretch, new GUIContent("Tile Texture Stretch", "Specifies if UV coordinates should stretch the texture to fit the rectangle enclosing the hexagon. If disabled, uv coordinates of hexagon vertices will match a regular hexagon enclosed in a circle."));
             EditorGUILayout.PropertyField(rotationShift, new GUIContent("Rotation Shift", "Applies an internal rotation to the generated vertices. Let's you control where the pentagons will be located."));
-            EditorGUILayout.PropertyField(vrEnabled, new GUIContent("VR Enabled", "Uses VR-compatible raycasting."));
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Interaction Settings", titleLabelStyle);
             EditorGUILayout.PropertyField(cameraMain, new GUIContent("Camera", "Camera used for interaction."));
             EditorGUILayout.PropertyField(respectOtherUI, new GUIContent("Respect Other UI", "Prevents interaction with hexasphere when an UI element is under pointer."));
             EditorGUILayout.PropertyField(highlightEnabled, new GUIContent("Enable Highlight", "Enables or disables selection of tiles."));
-            if (highlightEnabled.boolValue) {
+            if (highlightEnabled.boolValue)
+            {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.PropertyField(highlightStyle, new GUIContent("Style", "The style of the highlight blending."));
                 EditorGUILayout.PropertyField(highlightColor, new GUIContent("Color", "Main tint color for the highlighted tile."));
@@ -215,7 +229,8 @@ namespace HexasphereGrid {
             EditorGUILayout.PropertyField(rotationEnabled, new GUIContent("Enable Rotation", "Enables or disables rotation of hexasphere by user drag."));
             EditorGUILayout.PropertyField(rotationSpeed, new GUIContent("   Rotation Speed", "Speed for the rotation."));
             EditorGUILayout.PropertyField(rotationAxisAllowed, new GUIContent("   Rotation Axis", "Allowed rotation axis."));
-            if (rotationAxisAllowed.intValue == (int)ROTATION_AXIS_ALLOWED.Straight) {
+            if (rotationAxisAllowed.intValue == (int)ROTATION_AXIS_ALLOWED.Straight)
+            {
                 EditorGUILayout.PropertyField(rotationAxisVerticalThreshold, new GUIContent("   Min Pole Distance", "Allowed minimum distance to North or South Pole."));
             }
             EditorGUILayout.PropertyField(rightButtonDrag, new GUIContent("Right Button Drag", "If set to true, user can hold and drag the hexasphere using the right mouse button."));
@@ -237,37 +252,48 @@ namespace HexasphereGrid {
             EditorGUILayout.PropertyField(pathFindingFormula, new GUIContent("Estimation Method", "The estimation method used for getting the path between two tiles."));
             EditorGUILayout.PropertyField(pathFindingSearchLimit, new GUIContent("Search Limit", "Maximum path length."));
             EditorGUILayout.PropertyField(pathFindingUseExtrusion, new GUIContent("Use Extrusion", "If path-finding should use tiles' extrusion (altitude) value as part of their crossing cost."));
-            if (pathFindingUseExtrusion.boolValue) {
+            if (pathFindingUseExtrusion.boolValue)
+            {
                 EditorGUILayout.PropertyField(pathFindingExtrusionWeight, new GUIContent("   Extrusion Weight", "Weight for the extrusion of each tile. The extrusion value (0..1) is multiplied by this value then added to the tile crossing cost."));
             }
 
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Tools", titleLabelStyle);
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Export Wireframe")) {
-                if (EditorUtility.DisplayDialog("Create Asset", "Current hexasphere wireframe mesh will be exported to project root.", "Ok", "Cancel")) {
+            if (GUILayout.Button("Export Wireframe"))
+            {
+                if (EditorUtility.DisplayDialog("Create Asset", "Current hexasphere wireframe mesh will be exported to project root.", "Ok", "Cancel"))
+                {
                     Transform t = hexa.transform.Find("WireFrame");
-                    if (t != null) {
+                    if (t != null)
+                    {
                         MeshFilter[] mfs = t.GetComponentsInChildren<MeshFilter>();
-                        foreach (MeshFilter mf in mfs) {
+                        foreach (MeshFilter mf in mfs)
+                        {
                             SaveMeshAsset(mf.sharedMesh);
                         }
                     }
                 }
             }
-            if (GUILayout.Button("Export Model")) {
-                if (EditorUtility.DisplayDialog("Create Asset", "Current hexasphere shaded model will be exported to project root.", "Ok", "Cancel")) {
+            if (GUILayout.Button("Export Model"))
+            {
+                if (EditorUtility.DisplayDialog("Create Asset", "Current hexasphere shaded model will be exported to project root.", "Ok", "Cancel"))
+                {
                     Transform t = hexa.transform.Find("ShadedFrame");
-                    if (t != null) {
+                    if (t != null)
+                    {
                         MeshFilter[] mfs = t.GetComponentsInChildren<MeshFilter>();
-                        foreach (MeshFilter mf in mfs) {
+                        foreach (MeshFilter mf in mfs)
+                        {
                             SaveMeshAsset(mf.sharedMesh);
                         }
                     }
                 }
             }
-            if (GUILayout.Button("Export Hexasphere")) {
-                if (EditorUtility.DisplayDialog("Export Hexasphere", "This operation will create a permanent copy of the hexasphere in the scene.", "Ok", "Cancel")) {
+            if (GUILayout.Button("Export Hexasphere"))
+            {
+                if (EditorUtility.DisplayDialog("Export Hexasphere", "This operation will create a permanent copy of the hexasphere in the scene.", "Ok", "Cancel"))
+                {
                     SaveHexasphere();
                 }
             }
@@ -275,17 +301,22 @@ namespace HexasphereGrid {
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Separator();
 
-            if (!Application.isPlaying) {
+            if (!Application.isPlaying)
+            {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Grid Editor", titleLabelStyle);
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Export Config")) {
-                    if (EditorUtility.DisplayDialog("Export Grid Settings", "This option will add a Hexasphere Config component to this game object with current tile settings. You can restore this configuration just enabling this new component.", "Ok", "Cancel")) {
+                if (GUILayout.Button("Export Config"))
+                {
+                    if (EditorUtility.DisplayDialog("Export Grid Settings", "This option will add a Hexasphere Config component to this game object with current tile settings. You can restore this configuration just enabling this new component.", "Ok", "Cancel"))
+                    {
                         CreatePlaceholder();
                     }
                 }
-                if (GUILayout.Button("Reset Tiles")) {
-                    if (EditorUtility.DisplayDialog("Reset Grid", "Reset tiles to their default values?", "Ok", "Cancel")) {
+                if (GUILayout.Button("Reset Tiles"))
+                {
+                    if (EditorUtility.DisplayDialog("Reset Grid", "Reset tiles to their default values?", "Ok", "Cancel"))
+                    {
                         ResetTiles();
                         GUIUtility.ExitGUI();
                         return;
@@ -297,16 +328,24 @@ namespace HexasphereGrid {
                 EditorGUILayout.PropertyField(enableGridEditor, new GUIContent("Enable Editor", "Enables grid editing options in Scene View"));
                 EditorGUILayout.EndHorizontal();
 
-                if (enableGridEditor.boolValue) {
+                if (enableGridEditor.boolValue)
+                {
                     int selectedCount = tileSelectedIndices.Count;
-                    if (targets.Length > 1) {
+                    if (targets.Length > 1)
+                    {
                         GUILayout.Label("Grid Editor only works with one hexasphere at a time.");
-                    } else if (selectedCount == 0) {
+                    }
+                    else if (selectedCount == 0)
+                    {
                         GUILayout.Label("Click on a tile in Scene View to edit its properties\n(hold Control to select multiple tiles).");
-                    } else {
+                    }
+                    else
+                    {
                         // Check that all selected tiles are within range
-                        for (int k = 0; k < selectedCount; k++) {
-                            if (tileSelectedIndices[k] < 0 || tileSelectedIndices[k] >= hexa.tiles.Length) {
+                        for (int k = 0; k < selectedCount; k++)
+                        {
+                            if (tileSelectedIndices[k] < 0 || tileSelectedIndices[k] >= hexa.tiles.Length)
+                            {
                                 tileSelectedIndices.Clear();
                                 GUIUtility.ExitGUI();
                                 return;
@@ -315,14 +354,19 @@ namespace HexasphereGrid {
                         int tileSelectedIndex = tileSelectedIndices[0];
 
                         EditorGUILayout.BeginHorizontal();
-                        if (selectedCount == 1) {
+                        if (selectedCount == 1)
+                        {
                             GUILayout.Label("Selected Cell", GUILayout.Width(120));
                             GUILayout.Label(tileSelectedIndex.ToString(), GUILayout.Width(120));
-                        } else {
+                        }
+                        else
+                        {
                             GUILayout.Label("Selected Cells", GUILayout.Width(120));
                             sb.Length = 0;
-                            for (int k = 0; k < selectedCount; k++) {
-                                if (k > 0) {
+                            for (int k = 0; k < selectedCount; k++)
+                            {
+                                if (k > 0)
+                                {
                                     sb.Append(", ");
                                 }
                                 sb.Append(tileSelectedIndices[k].ToString());
@@ -332,14 +376,16 @@ namespace HexasphereGrid {
                         EditorGUILayout.EndHorizontal();
                         Tile selectedTile = hexa.tiles[tileSelectedIndex];
 
-                        if (selectedCount == 1) {
+                        if (selectedCount == 1)
+                        {
 
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.Label("   String Tag", GUILayout.Width(120));
                             tileTag = EditorGUILayout.TextField(tileTag);
                             if (tileTag == selectedTile.tag || (string.IsNullOrEmpty(tileTag) && string.IsNullOrEmpty(selectedTile.tag)))
                                 GUI.enabled = false;
-                            if (GUILayout.Button("Set Tag", GUILayout.Width(60))) {
+                            if (GUILayout.Button("Set Tag", GUILayout.Width(60)))
+                            {
                                 hexa.SetTileTag(tileSelectedIndex, tileTag);
                             }
                             GUI.enabled = true;
@@ -350,7 +396,8 @@ namespace HexasphereGrid {
                             tileTagInt = EditorGUILayout.IntField(tileTagInt, GUILayout.Width(60));
                             if (tileTagInt == selectedTile.tagInt)
                                 GUI.enabled = false;
-                            if (GUILayout.Button("Set Tag", GUILayout.Width(60))) {
+                            if (GUILayout.Button("Set Tag", GUILayout.Width(60)))
+                            {
                                 hexa.SetTileTag(tileSelectedIndex, tileTagInt);
                             }
                             GUI.enabled = true;
@@ -366,22 +413,27 @@ namespace HexasphereGrid {
                         tileTextureIndex = EditorGUILayout.IntField(tileTextureIndex, GUILayout.Width(40));
                         if (hexa.GetTileColor(tileSelectedIndex, true) == tileColor && hexa.GetTileTextureIndex(tileSelectedIndex) == tileTextureIndex)
                             GUI.enabled = false;
-                        if (GUILayout.Button(new GUIContent("Set", "Press ALT+S to quick set"), GUILayout.Width(50))) {
-                            for (int k = 0; k < selectedCount; k++) {
+                        if (GUILayout.Button(new GUIContent("Set", "Press ALT+S to quick set"), GUILayout.Width(50)))
+                        {
+                            for (int k = 0; k < selectedCount; k++)
+                            {
                                 hexa.SetTileTexture(tileSelectedIndices[k], tileTextureIndex, tileColor, false);
                             }
                             needsRedraw = true;
                         }
                         GUI.enabled = true;
-                        if (GUILayout.Button(new GUIContent("Clear", "Press ALT+C to quick clear"), GUILayout.Width(50))) {
-                            for (int k = 0; k < selectedCount; k++) {
+                        if (GUILayout.Button(new GUIContent("Clear", "Press ALT+C to quick clear"), GUILayout.Width(50)))
+                        {
+                            for (int k = 0; k < selectedCount; k++)
+                            {
                                 hexa.ClearTile(tileSelectedIndices[k]);
                             }
                             needsRedraw = true;
                         }
                         EditorGUILayout.EndHorizontal();
 
-                        if (needsRedraw) {
+                        if (needsRedraw)
+                        {
                             RefreshGrid();
                             GUIUtility.ExitGUI();
                             return;
@@ -392,30 +444,37 @@ namespace HexasphereGrid {
                     GUILayout.Label("Textures", GUILayout.Width(120));
                     EditorGUILayout.EndHorizontal();
 
-                    if (toggleButtonStyleNormal == null) {
+                    if (toggleButtonStyleNormal == null)
+                    {
                         toggleButtonStyleNormal = "Button";
                         toggleButtonStyleToggled = new GUIStyle(toggleButtonStyleNormal);
                         toggleButtonStyleToggled.normal.background = toggleButtonStyleToggled.active.background;
                     }
 
                     int textureMax = hexa.textures.Length - 1;
-                    while (textureMax >= 1 && hexa.textures[textureMax] == null) {
+                    while (textureMax >= 1 && hexa.textures[textureMax] == null)
+                    {
                         textureMax--;
                     }
                     textureMax++;
                     if (textureMax >= hexa.textures.Length)
                         textureMax = hexa.textures.Length - 1;
 
-                    for (int k = 1; k <= textureMax; k++) {
+                    for (int k = 1; k <= textureMax; k++)
+                    {
                         EditorGUILayout.BeginHorizontal();
                         GUILayout.Label("  " + k.ToString(), GUILayout.Width(40));
                         hexa.textures[k] = (Texture2D)EditorGUILayout.ObjectField(hexa.textures[k], typeof(Texture2D), false);
-                        if (hexa.textures[k] != null) {
-                            if (GUILayout.Button(new GUIContent("T", "Texture mode - if enabled, you can paint several tiles just clicking over them."), textureMode == k ? toggleButtonStyleToggled : toggleButtonStyleNormal, GUILayout.Width(20))) {
+                        if (hexa.textures[k] != null)
+                        {
+                            if (GUILayout.Button(new GUIContent("T", "Texture mode - if enabled, you can paint several tiles just clicking over them."), textureMode == k ? toggleButtonStyleToggled : toggleButtonStyleNormal, GUILayout.Width(20)))
+                            {
                                 textureMode = textureMode == k ? 0 : k;
                             }
-                            if (GUILayout.Button(new GUIContent("X", "Remove texture"), GUILayout.Width(20))) {
-                                if (EditorUtility.DisplayDialog("Remove texture", "Are you sure you want to remove this texture?", "Yes", "No")) {
+                            if (GUILayout.Button(new GUIContent("X", "Remove texture"), GUILayout.Width(20)))
+                            {
+                                if (EditorUtility.DisplayDialog("Remove texture", "Are you sure you want to remove this texture?", "Yes", "No"))
+                                {
                                     hexa.textures[k] = null;
                                     GUIUtility.ExitGUI();
                                     return;
@@ -432,8 +491,10 @@ namespace HexasphereGrid {
 
 
             if (serializedObject.ApplyModifiedProperties() || (Event.current.type == EventType.ExecuteCommand &&
-                Event.current.commandName == "UndoRedoPerformed")) {
-                foreach (Hexasphere hex in targets) {
+                Event.current.commandName == "UndoRedoPerformed"))
+            {
+                foreach (Hexasphere hex in targets)
+                {
                     hex.UpdateMaterialProperties();
                 }
                 HideEditorMesh();
@@ -441,7 +502,8 @@ namespace HexasphereGrid {
             }
         }
 
-        void OnSceneGUI() {
+        void OnSceneGUI()
+        {
             if (hexa == null || Application.isPlaying || !hexa.enableGridEditor)
                 return;
             Event e = Event.current;
@@ -450,13 +512,15 @@ namespace HexasphereGrid {
 
             bool gridHit = hexa.CheckRay(HandleUtility.GUIPointToWorldRay(e.mousePosition));
 
-            if (tileHighlightedIndex != hexa.lastHighlightedTileIndex) {
+            if (tileHighlightedIndex != hexa.lastHighlightedTileIndex)
+            {
                 tileHighlightedIndex = hexa.lastHighlightedTileIndex;
                 SceneView.RepaintAll();
             }
 
             int count = tileSelectedIndices.Count;
-            for (int k = 0; k < count; k++) {
+            for (int k = 0; k < count; k++)
+            {
                 int idx = tileSelectedIndices[k];
                 Vector3 pos = hexa.GetTileCenter(idx);
                 Handles.color = colorSelection;
@@ -468,24 +532,32 @@ namespace HexasphereGrid {
 
             bool redraw = false;
 
-            if ((e.type == EventType.MouseDown && e.isMouse && e.button == 0) || e.shift) {
+            if ((e.type == EventType.MouseDown && e.isMouse && e.button == 0) || e.shift)
+            {
                 if (gridHit && e.type == EventType.MouseDown)
                     e.Use();
-                if (!e.shift && tileSelectedIndices.Contains(tileHighlightedIndex)) {
+                if (!e.shift && tileSelectedIndices.Contains(tileHighlightedIndex))
+                {
                     tileSelectedIndices.Remove(tileHighlightedIndex);
-                } else {
-                    if (!e.shift && !e.control) {
+                }
+                else
+                {
+                    if (!e.shift && !e.control)
+                    {
                         tileSelectedIndices.Clear();
                     }
-                    if (!tileSelectedIndices.Contains(tileHighlightedIndex)) {
+                    if (!tileSelectedIndices.Contains(tileHighlightedIndex))
+                    {
                         tileSelectedIndices.Add(tileHighlightedIndex);
                     }
 
-                    if (textureMode > 0) {
+                    if (textureMode > 0)
+                    {
                         hexa.SetTileTexture(tileHighlightedIndex, textureMode, Color.white);
                         redraw = true;
                     }
-                    if (!e.shift) {
+                    if (!e.shift)
+                    {
                         tileColor = hexa.GetTileColor(tileHighlightedIndex);
                         if (tileColor.a == 0)
                             tileColor = Color.white;
@@ -497,16 +569,23 @@ namespace HexasphereGrid {
                 }
             }
 
-            if (e.shift) {
-                if (e.keyCode == KeyCode.S) {
-                    if (tileTextureIndex == 0) {
+            if (e.shift)
+            {
+                if (e.keyCode == KeyCode.S)
+                {
+                    if (tileTextureIndex == 0)
+                    {
                         hexa.SetTileColor(tileHighlightedIndex, tileColor);
-                    } else {
+                    }
+                    else
+                    {
                         hexa.SetTileTexture(tileHighlightedIndex, tileTextureIndex, tileColor, false);
                     }
                     redraw = true;
                     e.Use();
-                } else if (e.keyCode == KeyCode.C) {
+                }
+                else if (e.keyCode == KeyCode.C)
+                {
                     hexa.ClearTile(tileHighlightedIndex);
                     redraw = true;
                     e.Use();
@@ -516,14 +595,16 @@ namespace HexasphereGrid {
             if (redraw)
                 SceneView.RepaintAll();
 
-            if (gridHit) {
+            if (gridHit)
+            {
                 Selection.activeGameObject = hexa.transform.gameObject;
             }
         }
 
         #region Utility functions
 
-        Texture2D MakeTex(int width, int height, Color col) {
+        Texture2D MakeTex(int width, int height, Color col)
+        {
             Color[] pix = new Color[width * height];
 
             for (int i = 0; i < pix.Length; i++)
@@ -537,9 +618,11 @@ namespace HexasphereGrid {
             return result;
         }
 
-        void SaveMeshAsset(Mesh mesh) {
+        void SaveMeshAsset(Mesh mesh)
+        {
             string path = "";
-            for (int k = 0; k < 10000; k++) {
+            for (int k = 0; k < 10000; k++)
+            {
                 path = "Assets/hexasphere" + k.ToString() + ".asset";
                 if (!File.Exists(path))
                     break;
@@ -551,35 +634,41 @@ namespace HexasphereGrid {
             AssetDatabase.Refresh();
         }
 
-        void SaveHexasphere() {
+        void SaveHexasphere()
+        {
             GameObject o = hexa.Export();
             EditorGUIUtility.PingObject(o);
             GUIUtility.ExitGUI();
         }
 
-        void ResetTiles() {
+        void ResetTiles()
+        {
             tileSelectedIndices.Clear();
             tileColor = Color.white;
             hexa.ClearTiles();
             RefreshGrid();
         }
 
-        void RefreshGrid() {
+        void RefreshGrid()
+        {
             HideEditorMesh();
             EditorUtility.SetDirty(target);
             SceneView.RepaintAll();
         }
 
-        void CreatePlaceholder() {
+        void CreatePlaceholder()
+        {
             HexasphereConfig configComponent = hexa.gameObject.AddComponent<HexasphereConfig>();
             configComponent.textures = hexa.textures;
             configComponent.config = hexa.GetTilesConfigurationData();
             configComponent.enabled = false;
         }
 
-        void HideEditorMesh() {
+        void HideEditorMesh()
+        {
             Renderer[] rr = hexa.GetComponentsInChildren<Renderer>(true);
-            for (int k = 0; k < rr.Length; k++) {
+            for (int k = 0; k < rr.Length; k++)
+            {
 #if UNITY_5_5_OR_NEWER
                 EditorUtility.SetSelectedRenderState(rr[k], EditorSelectedRenderState.Hidden);
 #else
@@ -593,12 +682,14 @@ namespace HexasphereGrid {
         #region Editor menu integration
 
         [MenuItem("GameObject/3D Object/Hexasphere", false)]
-        static void CreateHexasphereMenuOption(MenuCommand menuCommand) {
+        static void CreateHexasphereMenuOption(MenuCommand menuCommand)
+        {
             // Create a custom game object
             GameObject go = new GameObject("Hexasphere");
             go.name = "Hexasphere";
             Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
-            if (Selection.activeTransform != null) {
+            if (Selection.activeTransform != null)
+            {
                 go.transform.SetParent(Selection.activeTransform, false);
                 go.transform.localPosition = Misc.Vector3zero;
             }
@@ -612,29 +703,35 @@ namespace HexasphereGrid {
 
         #region SRP utils
 
-        void CheckDepthPrimingMode() {
+        void CheckDepthPrimingMode()
+        {
             RenderPipelineAsset pipe = GraphicsSettings.currentRenderPipeline;
             if (pipe == null) return;
             // Check depth priming mode
             FieldInfo renderers = pipe.GetType().GetField("m_RendererDataList", BindingFlags.NonPublic | BindingFlags.Instance);
             if (renderers == null) return;
-            foreach (var renderer in (object[])renderers.GetValue(pipe)) {
+            foreach (var renderer in (object[])renderers.GetValue(pipe))
+            {
                 if (renderer == null) continue;
                 FieldInfo depthPrimingModeField = renderer.GetType().GetField("m_DepthPrimingMode", BindingFlags.NonPublic | BindingFlags.Instance);
                 int depthPrimingMode = -1;
-                if (depthPrimingModeField != null) {
+                if (depthPrimingModeField != null)
+                {
                     depthPrimingMode = (int)depthPrimingModeField.GetValue(renderer);
                 }
 
                 FieldInfo renderingModeField = renderer.GetType().GetField("m_RenderingMode", BindingFlags.NonPublic | BindingFlags.Instance);
                 int renderingMode = -1;
-                if (renderingModeField != null) {
+                if (renderingModeField != null)
+                {
                     renderingMode = (int)renderingModeField.GetValue(renderer);
                 }
 
-                if (depthPrimingMode > 0 && renderingMode != 1) {
+                if (depthPrimingMode > 0 && renderingMode != 1)
+                {
                     EditorGUILayout.HelpBox("Depth Priming Mode in URP asset must be disabled.", MessageType.Warning);
-                    if (GUILayout.Button("Show Pipeline Asset")) {
+                    if (GUILayout.Button("Show Pipeline Asset"))
+                    {
                         Selection.activeObject = (Object)renderer;
                         GUIUtility.ExitGUI();
                     }

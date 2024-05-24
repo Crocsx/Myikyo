@@ -1,20 +1,20 @@
-using UnityEngine;
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using UnityEngine;
 
-namespace HexasphereGrid {
+namespace HexasphereGrid
+{
 
-    struct PFClosedNode {
+    struct PFClosedNode
+    {
         public float f;
         public float g;
         public int index;
         public int prevIndex;
     }
 
-    struct PFNodeFast {
+    struct PFNodeFast
+    {
         public float f;
         public float g;
         public int prevIndex;
@@ -22,7 +22,8 @@ namespace HexasphereGrid {
         public int steps;
     }
 
-    public partial class Hexasphere : MonoBehaviour {
+    public partial class Hexasphere : MonoBehaviour
+    {
 
 
         bool needRefreshRouteMatrix;
@@ -36,7 +37,8 @@ namespace HexasphereGrid {
         bool mIgnoreTileCanCross;
         int lastRouteMatrixGroupMask = -1;
 
-        void ComputeRouteMatrix(int groupMask) {
+        void ComputeRouteMatrix(int groupMask)
+        {
 
             if (!needRefreshRouteMatrix && lastRouteMatrixGroupMask == groupMask)
                 return;
@@ -45,24 +47,33 @@ namespace HexasphereGrid {
             lastRouteMatrixGroupMask = groupMask;
 
             // Compute route
-            for (int j = 0; j < tiles.Length; j++) {
-                if ((mIgnoreTileCanCross || tiles[j].canCross) && (tiles[j].group & groupMask) > 0) {   // set navigation bit
+            for (int j = 0; j < tiles.Length; j++)
+            {
+                if ((mIgnoreTileCanCross || tiles[j].canCross) && (tiles[j].group & groupMask) > 0)
+                {   // set navigation bit
                     float cost = tiles[j].crossCost;
-                    if (_pathFindingUseExtrusion && _extruded) {
+                    if (_pathFindingUseExtrusion && _extruded)
+                    {
                         cost += tiles[j].extrudeAmount * _pathFindingExtrusionWeight;
                     }
                     tiles[j].computedCrossCost = cost;
-                } else {       // clear navigation bit
+                }
+                else
+                {       // clear navigation bit
                     tiles[j].computedCrossCost = 0;
                 }
             }
 
-            if (pfCalc == null || pfCalc.Length != tiles.Length) {
+            if (pfCalc == null || pfCalc.Length != tiles.Length)
+            {
                 pfCalc = new PFNodeFast[tiles.Length];
             }
-            if (open == null) {
+            if (open == null)
+            {
                 open = new PQInt(new PFNodesComparer(pfCalc), tiles.Length);
-            } else {
+            }
+            else
+            {
                 open.Clear();
                 Array.Clear(pfCalc, 0, pfCalc.Length);
                 PFNodesComparer comparer = (PFNodesComparer)open.comparer;
@@ -70,13 +81,17 @@ namespace HexasphereGrid {
             }
         }
 
-        List<PFClosedNode> FindPathFast(int tileStartIndex, int tileEndIndex) {
+        List<PFClosedNode> FindPathFast(int tileStartIndex, int tileEndIndex)
+        {
             bool found = false;
             int stepsCounter = 0;
-            if (openTileValue > 250) {
+            if (openTileValue > 250)
+            {
                 openTileValue = 1;
                 closeTileValue = 2;
-            } else {
+            }
+            else
+            {
                 openTileValue += 2;
                 closeTileValue += 2;
             }
@@ -95,37 +110,43 @@ namespace HexasphereGrid {
 
             open.Push(currentTileIndex);
 
-            while (open.tilesCount > 0) {
+            while (open.tilesCount > 0)
+            {
                 currentTileIndex = open.Pop();
 
                 if (pfCalc[currentTileIndex].status == closeTileValue)
                     continue;
 
-                if (currentTileIndex == tileEndIndex) {
+                if (currentTileIndex == tileEndIndex)
+                {
                     pfCalc[currentTileIndex].status = closeTileValue;
                     found = true;
                     break;
                 }
 
-                if (pfCalc[currentTileIndex].steps >= mSearchLimit) {
+                if (pfCalc[currentTileIndex].steps >= mSearchLimit)
+                {
                     continue;
                 }
 
                 int maxi = tiles[currentTileIndex].neighbours.Length;
-                for (int i = 0; i < maxi; i++) {
+                for (int i = 0; i < maxi; i++)
+                {
                     nextTileIndex = tiles[currentTileIndex].neighboursIndices[i];
 
                     float gridValue = tiles[nextTileIndex].computedCrossCost;
                     if (gridValue == 0)
                         continue;
                     // Custom tile crossing logic
-                    if (OnPathFindingCrossTile != null) {
+                    if (OnPathFindingCrossTile != null)
+                    {
                         gridValue += OnPathFindingCrossTile(this, nextTileIndex, currentTileIndex);
                     }
 
                     float mNewG = pfCalc[currentTileIndex].g + gridValue;
 
-                    if (pfCalc[nextTileIndex].status == openTileValue || pfCalc[nextTileIndex].status == closeTileValue) {
+                    if (pfCalc[nextTileIndex].status == openTileValue || pfCalc[nextTileIndex].status == closeTileValue)
+                    {
                         if (pfCalc[nextTileIndex].g <= mNewG)
                             continue;
                     }
@@ -135,7 +156,8 @@ namespace HexasphereGrid {
                     pfCalc[nextTileIndex].steps = pfCalc[currentTileIndex].steps + 1;
 
                     float dist = 1;
-                    switch (_pathFindingHeuristicFormula) {
+                    switch (_pathFindingHeuristicFormula)
+                    {
                         case HeuristicFormula.SphericalDistance:
                             dist = Vector3.Angle(destinationCenter, tiles[nextTileIndex].center);
                             break;
@@ -155,7 +177,8 @@ namespace HexasphereGrid {
                 pfCalc[currentTileIndex].status = closeTileValue;
             }
 
-            if (found) {
+            if (found)
+            {
                 close.Clear();
                 PFNodeFast tileTmp = pfCalc[tileEndIndex];
                 PFClosedNode stepTile;
@@ -163,7 +186,8 @@ namespace HexasphereGrid {
                 stepTile.g = tileTmp.g;
                 stepTile.prevIndex = tileTmp.prevIndex;
                 stepTile.index = tileEndIndex;
-                while (stepTile.index != stepTile.prevIndex) {
+                while (stepTile.index != stepTile.prevIndex)
+                {
                     close.Add(stepTile);
                     int pos = stepTile.prevIndex;
                     tileTmp = pfCalc[pos];
@@ -180,14 +204,17 @@ namespace HexasphereGrid {
 
     }
 
-    class PFNodesComparer : IComparer<int> {
+    class PFNodesComparer : IComparer<int>
+    {
         PFNodeFast[] m;
 
-        public PFNodesComparer(PFNodeFast[] nodes) {
+        public PFNodesComparer(PFNodeFast[] nodes)
+        {
             m = nodes;
         }
 
-        public int Compare(int a, int b) {
+        public int Compare(int a, int b)
+        {
             if (m[a].f > m[b].f)
                 return 1;
             else if (m[a].f < m[b].f)
@@ -195,41 +222,48 @@ namespace HexasphereGrid {
             return 0;
         }
 
-        public void SetMatrix(PFNodeFast[] nodes) {
+        public void SetMatrix(PFNodeFast[] nodes)
+        {
             m = nodes;
         }
     }
 
-    class PQInt {
+    class PQInt
+    {
         int[] tiles;
         IComparer<int> mComparer;
         public int tilesCount;
 
         public IComparer<int> comparer { get { return mComparer; } }
 
-        public PQInt(IComparer<int> comparer, int capacity) {
+        public PQInt(IComparer<int> comparer, int capacity)
+        {
             mComparer = comparer;
             tiles = new int[capacity];
             tilesCount = 0;
         }
 
-        void Swap(int i, int j) {
+        void Swap(int i, int j)
+        {
             int h = tiles[i];
             tiles[i] = tiles[j];
             tiles[j] = h;
         }
 
-        int Compare(int i, int j) {
+        int Compare(int i, int j)
+        {
             return mComparer.Compare(tiles[i], tiles[j]);
         }
 
-        public int Pop() {
+        public int Pop()
+        {
             int result = tiles[0];
             int p = 0, p1, p2, pn;
             int count = tilesCount - 1;
             tiles[0] = tiles[count];
             tilesCount--;
-            do {
+            do
+            {
                 pn = p;
                 p1 = 2 * p + 1;
                 p2 = p1 + 1;
@@ -247,24 +281,29 @@ namespace HexasphereGrid {
         }
 
 
-        public int Push(int item) {
+        public int Push(int item)
+        {
             int p = tilesCount, p2;
             tiles[tilesCount] = item;
             tilesCount++;
-            do {
+            do
+            {
                 if (p == 0)
                     break;
                 p2 = (p - 1) / 2;
-                if (Compare(p, p2) < 0) {
+                if (Compare(p, p2) < 0)
+                {
                     Swap(p, p2);
                     p = p2;
-                } else
+                }
+                else
                     break;
             } while (true);
             return p;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             tilesCount = 0;
         }
 

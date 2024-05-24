@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 /// <summary>
 /// Custom editor for the WorldGenerator class.
@@ -10,10 +10,12 @@ public class WorldEditor : Editor
     WorldGenerator generator;  // The WorldGenerator instance
     Editor shapeEditor;  // Editor for the shape settings
     Editor colorEditor;  // Editor for the color settings
+    Editor tilesEditor;  // Editor for the tiles settings
 
     // Foldout states for the shape and color settings
     bool shapeSettingsFolded;
     bool colorSettingsFolded;
+    bool tilesSettingsFolded;
 
     bool autoUpdate;  // Flag to determine if the world should auto-update when settings change
 
@@ -46,6 +48,7 @@ public class WorldEditor : Editor
         // If auto-update is enabled, pass the update method, otherwise pass null
         DrawSettingsEditor(generator.shapeSettings, autoUpdate ? generator.OnShapeSettingsUpdate : null, ref shapeSettingsFolded, ref shapeEditor);
         DrawSettingsEditor(generator.colorSettings, autoUpdate ? generator.OnShapeColorUpdate : null, ref colorSettingsFolded, ref colorEditor);
+        DrawSettingsEditor(generator.tileSettings, autoUpdate ? generator.onTileSettingUpdate : null, ref tilesSettingsFolded, ref tilesEditor);
     }
 
     /// <summary>

@@ -1,26 +1,30 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
-namespace HexasphereGrid {
-				
-	public static class Misc {
+namespace HexasphereGrid
+{
 
-		public static Vector3 Vector4zero = Vector4.zero;
-		public static Vector3 Vector3one = Vector3.one;
-		public static Vector3 Vector3zero = Vector3.zero;
-		public static Vector3 Vector3up = Vector3.up;
-		public static Vector2 Vector2one = Vector2.one;
-		public static Vector2 Vector2zero = Vector2.zero;
-		public static Color32 Color32White = Color.white;
+    public static class Misc
+    {
 
-		public static float Vector3SqrDistance (Vector3 a, Vector3 b) {
-			float dx = a.x - b.x;
-			float dy = a.y - b.y;
-			float dz = a.z - b.z;
-			return dx * dx + dy * dy + dz * dz;
-		}
+        public static Vector3 Vector4zero = Vector4.zero;
+        public static Vector3 Vector3one = Vector3.one;
+        public static Vector3 Vector3zero = Vector3.zero;
+        public static Vector3 Vector3up = Vector3.up;
+        public static Vector2 Vector2one = Vector2.one;
+        public static Vector2 Vector2zero = Vector2.zero;
+        public static Color32 Color32White = Color.white;
 
-        public static T FindObjectOfType<T>(bool includeInactive = false) where T : UnityEngine.Object {
+        public static float Vector3SqrDistance(Vector3 a, Vector3 b)
+        {
+            float dx = a.x - b.x;
+            float dy = a.y - b.y;
+            float dz = a.z - b.z;
+            return dx * dx + dy * dy + dz * dz;
+        }
+
+        public static T FindObjectOfType<T>(bool includeInactive = false) where T : UnityEngine.Object
+        {
 #if UNITY_2023_1_OR_NEWER
             return UnityEngine.Object.FindAnyObjectByType<T>(includeInactive ? FindObjectsInactive.Include : FindObjectsInactive.Exclude);
 #else
@@ -28,7 +32,8 @@ namespace HexasphereGrid {
 #endif
         }
 
-        public static UnityEngine.Object[] FindObjectsOfType(Type type, bool includeInactive = false) {
+        public static UnityEngine.Object[] FindObjectsOfType(Type type, bool includeInactive = false)
+        {
 #if UNITY_2023_1_OR_NEWER
             return UnityEngine.Object.FindObjectsByType(type, includeInactive ? FindObjectsInactive.Include : FindObjectsInactive.Exclude, FindObjectsSortMode.None);
 #else
@@ -37,7 +42,8 @@ namespace HexasphereGrid {
         }
 
 
-        public static T[] FindObjectsOfType<T>(bool includeInactive = false) where T : UnityEngine.Object {
+        public static T[] FindObjectsOfType<T>(bool includeInactive = false) where T : UnityEngine.Object
+        {
 #if UNITY_2023_1_OR_NEWER
             return UnityEngine.Object.FindObjectsByType<T>(includeInactive ? FindObjectsInactive.Include : FindObjectsInactive.Exclude, FindObjectsSortMode.None);
 #else

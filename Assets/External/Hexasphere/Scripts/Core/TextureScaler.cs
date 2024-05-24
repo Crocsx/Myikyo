@@ -1,43 +1,47 @@
 using UnityEngine;
 
-namespace HexasphereGrid {
-			
-	public class TextureScaler {
+namespace HexasphereGrid
+{
 
-		public static void Scale (Texture2D tex, int width, int height, FilterMode mode = FilterMode.Trilinear) {
+    public class TextureScaler
+    {
 
-			RenderTexture currentActiveRT = RenderTexture.active;
+        public static void Scale(Texture2D tex, int width, int height, FilterMode mode = FilterMode.Trilinear)
+        {
 
-			Rect texR = new Rect (0, 0, width, height);
-			_gpu_scale (tex, width, height, mode);
+            RenderTexture currentActiveRT = RenderTexture.active;
 
-			// Update new texture
-			tex.Reinitialize (width, height);
-			tex.ReadPixels (texR, 0, 0, true);
-			tex.Apply (true);
+            Rect texR = new Rect(0, 0, width, height);
+            _gpu_scale(tex, width, height, mode);
 
-			RenderTexture.active = currentActiveRT;
-		}
+            // Update new texture
+            tex.Reinitialize(width, height);
+            tex.ReadPixels(texR, 0, 0, true);
+            tex.Apply(true);
 
-		static void _gpu_scale (Texture2D src, int width, int height, FilterMode fmode) {
-			//We need the source texture in VRAM because we render with it
-			src.filterMode = fmode;
-			src.Apply (true);	
+            RenderTexture.active = currentActiveRT;
+        }
 
-			//Using RTT for best quality and performance. Thanks, Unity 5
-			RenderTexture rtt = new RenderTexture (width, height, 16);
+        static void _gpu_scale(Texture2D src, int width, int height, FilterMode fmode)
+        {
+            //We need the source texture in VRAM because we render with it
+            src.filterMode = fmode;
+            src.Apply(true);
 
-			//Set the RTT in order to render to it
-			Graphics.SetRenderTarget (rtt);
+            //Using RTT for best quality and performance. Thanks, Unity 5
+            RenderTexture rtt = new RenderTexture(width, height, 16);
 
-			//Setup 2D matrix in range 0..1, so nobody needs to care about sized
-			GL.LoadPixelMatrix (0, 1, 1, 0);
+            //Set the RTT in order to render to it
+            Graphics.SetRenderTarget(rtt);
 
-			//Then clear & draw the texture to fill the entire RTT.
-			GL.Clear(true, true, Color.black);
-			Graphics.DrawTexture (new Rect (0, 0, 1, 1), src);
+            //Setup 2D matrix in range 0..1, so nobody needs to care about sized
+            GL.LoadPixelMatrix(0, 1, 1, 0);
 
-		}
-	}
+            //Then clear & draw the texture to fill the entire RTT.
+            GL.Clear(true, true, Color.black);
+            Graphics.DrawTexture(new Rect(0, 0, 1, 1), src);
+
+        }
+    }
 
 }

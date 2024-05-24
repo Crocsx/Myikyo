@@ -1,7 +1,8 @@
 
 using UnityEngine;
 
-public class NoiseGenerator {
+public class NoiseGenerator
+{
 
     /// <summary>
     /// Generates a texture based on the provided noise settings.
